@@ -1,0 +1,96 @@
+import requests
+from background_task import background
+from django.conf import settings
+from .analysis_utils import analyze_products, calculate_product_scores
+from .models import Submission, ProductAnalysisResult, AnalysisResult
+from .webflow_utils import send_to_webflow
+
+
+@background()
+def process_submission(submission_id):
+    try:
+        submission = Submission.objects.get(id=submission_id)
+        full_product_list = []
+        pagination = True
+        page = 1
+        while pagination:
+            zinc_api_url = f"{settings.ZINC_SELLER_API_URL}?seller_id={submission.seller.seller_id}&retailer=amazon&page={page}"
+            response = requests.get(url=zinc_api_url, auth=(settings.ZINC_API_TOKEN, ""))
+            print(f"Request num:{page}")
+            if response.status_code == 200:
+                print(response.json())
+                try:
+                    data = response.json()
+                    full_product_list += (data['results'])
+                    print(f"{data['showing']}")
+                    if data['showing']['end'] == data['showing']['of']:
+                        pagination = False
+                    page += 1
+                except KeyError:
+                    print('key error')
+            else:
+                # TODO: Log errors
+                pass
+        print(full_product_list)
+        results = analyze_products(full_product_list)
+        print(results)
+        seller_copy_score_total = 0
+        seller_media_score_total = 0
+        seller_reviews_score_total = 0
+        seller_extra_score_total = 0
+        for result in results:
+            scores = calculate_product_scores(result)
+            seller_copy_score_total += scores['title_score']
+            seller_copy_score_total += scores['description_score']
+            seller_media_score_total += scores['media_score']
+            seller_reviews_score_total += scores['ratings_and_reviews_score']
+            new_product_analysis = ProductAnalysisResult(
+                seller=submission.seller,
+                submission=submission,
+                product=result['product_id'],
+                title=result['title']['title'][0:255],
+                title_score=scores['title_score'],
+                title_character_count=result['title']['num_chars'],
+                title_contains_promo_phrase=result['title']['contains_promo_phrase'],
+                title_contains_single_quote=result['title']['contains_single_quote'],
+                title_contains_ascii=result['title']['contains_ascii'],
+                title_contains_seo_adverse_chars=result['title']['contains_seo_adverse_chars'],
+                title_num_lower_case=result['title']['num_lower_case'],
+                title_num_all_caps=result['title']['num_all_caps'],
+                title_num_incorrect_caps=result['title']['num_incorrect_caps'],
+                title_contains_dollar_sign=result['title']['contains_dollar_sign'],
+                description_score=scores['description_score'],
+                description_character_count=result['description']['char_count'],
+                description_contains_quotes=result['description']['contains_quotes'],
+                description_contains_html=result['description']['contains_html'],
+                description_contains_price_condition_info=result['description']['contains_price_condition_info'],
+                description_contains_shipping_info=result['description']['contains_shipping_info'],
+                description_contains_contact_info=result['description']['contains_contact_info'],
+                description_num_lower_case_bullets=result['description']['num_lower_case_bullets'],
+                description_num_bullets=result['description']['num_bullets'],
+                media_score=scores['media_score'],
+                media_num_images=result['media']['num_images'],
+                media_low_qual_images=result['media']['low_qual_images'],
+                media_high_whitespace_images=result['media']['high_whitespace_images'],
+                media_num_videos=result['media']['num_videos'],
+                ratings_reviews_score=scores['ratings_and_reviews_score'],
+                rating=result['ratings_and_reviews']['rating'],
+                num_reviews=result['ratings_and_reviews']['review_count'],
+            )
+            new_product_analysis.save()
+        new_seller_analysis = AnalysisResult(
+            seller=submission.seller,
+            submission=submission,
+            copy_score=seller_copy_score_total/len(results),
+            media_score=seller_media_score_total/len(results),
+            feedback_score=seller_reviews_score_total/len(results),
+            extra_content_score=seller_extra_score_total/len(results),
+        )
+        new_seller_analysis.save()
+        print(results)
+        send_to_webflow(submission_id)
+
+    except Submission.DoesNotExist:
+        # TODO: Log errors
+        pass
+
