@@ -19,6 +19,7 @@ from .tasks import process_submission
 def create_submission(request):
     seller_profile_url = request.data.get('seller_profile_url', None)
     seller_email = request.data.get('seller_email', None)
+    limit_results = request.data.get('limit_results', None)
 
     # Parameter validation
     if not seller_profile_url or not seller_email:
@@ -61,7 +62,10 @@ def create_submission(request):
         seller = Seller.objects.create(email=seller_email, seller_id=seller_id)
 
     # Create submission
-    submission = Submission.objects.create(seller=seller, ip_address=ip_address)
+    if limit_results and limit_results >= 0:
+        submission = Submission.objects.create(seller=seller, ip_address=ip_address, limit_results=limit_results)
+    else:
+        submission = Submission.objects.create(seller=seller, ip_address=ip_address)
     process_submission(submission.id)
     return Response('Thank you for your submission. We\'ll email your results within 1 business day',
                     status=status.HTTP_201_CREATED)
