@@ -34,14 +34,17 @@ def process_submission(submission_id):
         print(full_product_list)
         results = analyze_products(full_product_list)
         print(results)
-        seller_copy_score_total = 0
+        seller_title_score_total = 0
+        seller_description_score_total = 0
+        seller_bullets_score_total = 0
         seller_media_score_total = 0
         seller_reviews_score_total = 0
         seller_extra_score_total = 0
         for result in results:
             scores = calculate_product_scores(result)
-            seller_copy_score_total += scores['title_score']
-            seller_copy_score_total += scores['description_score']
+            seller_title_score_total += scores['title_score']
+            seller_description_score_total += scores['description_score']
+            seller_bullets_score_total += scores['bullets_score']
             seller_media_score_total += scores['media_score']
             seller_reviews_score_total += scores['ratings_and_reviews_score']
             new_product_analysis = ProductAnalysisResult(
@@ -66,8 +69,9 @@ def process_submission(submission_id):
                 description_contains_price_condition_info=result['description']['contains_price_condition_info'],
                 description_contains_shipping_info=result['description']['contains_shipping_info'],
                 description_contains_contact_info=result['description']['contains_contact_info'],
-                description_num_lower_case_bullets=result['description']['num_lower_case_bullets'],
-                description_num_bullets=result['description']['num_bullets'],
+                description_num_lower_case_bullets=result['bullets']['num_lower_case_bullets'],
+                description_num_bullets=result['bullets']['num_bullets'],
+                bullets_score=scores['bullets_score'],
                 media_score=scores['media_score'],
                 media_num_images=result['media']['num_images'],
                 media_low_qual_images=result['media']['low_qual_images'],
@@ -78,10 +82,13 @@ def process_submission(submission_id):
                 num_reviews=result['ratings_and_reviews']['review_count'],
             )
             new_product_analysis.save()
+        seller_copy_score = (((seller_title_score_total/len(results))*.425) +
+                             ((seller_description_score_total/len(results))*.425) +
+                             ((seller_bullets_score_total/len(results))*.15))
         new_seller_analysis = AnalysisResult(
             seller=submission.seller,
             submission=submission,
-            copy_score=seller_copy_score_total/len(results),
+            copy_score=seller_copy_score,
             media_score=seller_media_score_total/len(results),
             feedback_score=seller_reviews_score_total/len(results),
             extra_content_score=seller_extra_score_total/len(results),

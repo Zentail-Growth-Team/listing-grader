@@ -56,6 +56,7 @@ class ProductAnalysisResult(models.Model):
     description_contains_contact_info = models.BooleanField()
     description_num_lower_case_bullets = models.IntegerField()
     description_num_bullets = models.IntegerField()
+    bullets_score = models.IntegerField()
     media_score = models.IntegerField()
     media_num_images = models.IntegerField()
     media_low_qual_images = models.IntegerField()

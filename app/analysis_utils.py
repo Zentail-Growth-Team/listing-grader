@@ -119,13 +119,16 @@ def analyze_products(products_list):
                 print("Analyze titles")
                 title_results = analyze_title(title)
                 print("Analyze descriptions")
-                description_results = analyze_description(description, feature_bullets)
+                description_results = analyze_description(description)
+                print("Analyze bullets")
+                bullets_results = analyze_bullets(feature_bullets)
                 print("Analyze media")
                 media_results = analyze_media(images, videos)
                 results.append({
                     "product_id": product_id,
                     "title": title_results,
                     "description": description_results,
+                    "bullets": bullets_results,
                     "media": media_results,
                     "ratings_and_reviews": {
                         "rating": product_data['stars'] if product_data['stars'] else 0,
@@ -225,7 +228,7 @@ def analyze_title(title):
     })
 
 
-def analyze_description(description, feature_bullets):
+def analyze_description(description):
     # Checking for quotes
     if "\"" in description:
         contains_quotes = True
@@ -260,6 +263,18 @@ def analyze_description(description, feature_bullets):
     else:
         contains_contact_info = False
 
+    return({
+        'char_count': len(description),
+        'contains_quotes': contains_quotes,
+        'contains_html': contains_html,
+        'contains_price_condition_info': contains_price_condition_info,
+        'contains_shipping_info': contains_shipping_info,
+        'contains_contact_info': contains_contact_info,
+
+    })
+
+
+def analyze_bullets(feature_bullets):
     # Checking that bullets start with upper case
     num_lower_case_bullets = 0
     for bullet in feature_bullets:
@@ -270,14 +285,8 @@ def analyze_description(description, feature_bullets):
     num_bullets = len(feature_bullets)
 
     return({
-        'char_count': len(description),
-        'contains_quotes': contains_quotes,
-        'contains_html': contains_html,
-        'contains_price_condition_info': contains_price_condition_info,
-        'contains_shipping_info': contains_shipping_info,
-        'contains_contact_info': contains_contact_info,
         'num_lower_case_bullets': num_lower_case_bullets,
-        'num_bullets': num_bullets,
+        'num_bullets': num_bullets
     })
 
 
@@ -344,14 +353,17 @@ def calculate_product_scores(product):
         description_score += 5
     if not description['contains_contact_info']:
         description_score += 15
-    if description['num_bullets'] >= 3:
-        description_score += 5
-    if description['num_bullets'] >= 4:
-        description_score += 10
-    if description['num_bullets'] >= 5:
-        description_score += 10
-    if description['num_lower_case_bullets'] < 1:
-        description_score += 10
+
+    bullets_score = 0
+    bullets = product['bullets']
+    if bullets['num_bullets'] >= 3:
+        bullets_score += 5
+    if bullets['num_bullets'] >= 4:
+        bullets_score += 10
+    if bullets['num_bullets'] >= 5:
+        bullets_score += 10
+    if bullets['num_lower_case_bullets'] < 1:
+        bullets_score += 10
 
     media_score = 0
     media = product['media']
@@ -394,6 +406,7 @@ def calculate_product_scores(product):
     return({
         "title_score": title_score,
         "description_score": description_score,
+        "bullets_score": bullets_score,
         "media_score": media_score,
         "ratings_and_reviews_score": ratings_and_reviews_score,
     })
