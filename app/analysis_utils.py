@@ -310,6 +310,7 @@ def analyze_media(images, videos):
         'low_qual_images': low_qual_images,
         'high_whitespace_images': high_whitespace_images,
         'num_videos': num_videos,
+        'feature_image_url': images[0] if images else None,
     })
 
 

@@ -65,3 +65,4 @@ class ProductAnalysisResult(models.Model):
     ratings_reviews_score = models.IntegerField()
     rating = models.FloatField()
     num_reviews = models.IntegerField()
+    feature_image_url = models.URLField(blank=True, null=True)

@@ -1,3 +1,4 @@
+import logging
 from datetime import timedelta
 from django.utils import timezone
 from django.conf import settings
@@ -9,10 +10,10 @@ from validate_email import validate_email
 from .models import (
     Seller,
     Submission,
-    AnalysisResult,
-    ProductAnalysisResult
 )
 from .tasks import process_submission
+
+logger = logging.getLogger(__name__)
 
 
 @api_view(['POST'])

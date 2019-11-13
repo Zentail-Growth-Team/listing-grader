@@ -25,12 +25,14 @@ def send_to_webflow(submission_id):
         'Media Score': analysis.media_score,
         'Feedback Score': analysis.feedback_score,
         'Extra Content Score': analysis.extra_content_score,
-        'Submission Timestamp': submission.timestamp.strftime('%m/$d/%Y %I:%M %p'),
+        'Submission Timestamp': submission.timestamp.strftime('%m/%d/%Y %I:%M %p'),
         'Product JSON Blob': products_list,
         '_archived': False,
         '_draft': False
     }
 
+    print(fields)
     data = {'fields': fields}
     json_data = json.dumps(data)
-    item = webflow_api.createItem('5db07b5331da36426bfa34f1', json_data, live=True)
+    print(json_data)
+    #item = webflow_api.createItem('5db07b5331da36426bfa34f1', json_data, live=True)

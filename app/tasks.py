@@ -25,6 +25,8 @@ def process_submission(submission_id):
                     print(f"{data['showing']}")
                     if data['showing']['end'] == data['showing']['of']:
                         pagination = False
+                    if submission.limit_results != 0 and len(full_product_list) >= submission.limit_results:
+                        pagination = False
                     page += 1
                 except KeyError:
                     print('key error')
@@ -80,6 +82,7 @@ def process_submission(submission_id):
                 ratings_reviews_score=scores['ratings_and_reviews_score'],
                 rating=result['ratings_and_reviews']['rating'],
                 num_reviews=result['ratings_and_reviews']['review_count'],
+                feature_image_url=result['media']['feature_image_url'],
             )
             new_product_analysis.save()
         seller_copy_score = (((seller_title_score_total/len(results))*.425) +
