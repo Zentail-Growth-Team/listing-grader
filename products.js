@@ -5,11 +5,25 @@ let product_row = document.getElementById("Table-row");
 let product_row_expand = document.getElementById("Table-row-expand");
 let num_of_products = 0;
 
+function expand_product(id) {
+    let row_to_exp = document.getElementById("Table-row-expand-" + id.replace("Table-row-", ""));
+    if (row_to_exp.getAttribute("style").includes("height: 0px;") === true){
+        row_to_exp.setAttribute("style",
+            row_to_exp.getAttribute("style").replace("height: 0px;", ""))
+    }
+    else if (row_to_exp.getAttribute("style").includes("height: 0px;") === false){
+        row_to_exp.setAttribute("style",
+            row_to_exp.getAttribute("style") + " height: 0px;")
+    }
+}
 json = json.replace(/\u00a0/g, ' ');
 json = json.replace(/&#39;/g,"'");
 JSON.parse(json.replace(/&quot;/g,'"')).forEach(function(product) {
     num_of_products = num_of_products + 1;
-    //console.log(product);
+    product_row.id = "Table-row-" + num_of_products;
+    product_row_expand.id = "Table-row-expand-" + num_of_products;
+    product_row_expand.setAttribute("style", "height: 0px;");
+    product_row.onclick = function (){expand_product(this.id)};
     let title = (product_row.getElementsByClassName("second")[0]).getElementsByClassName("tittle-heading-4")[0];
     title.innerText = product.title;
     let reviews = (product_row.getElementsByClassName("fourth")[0]).getElementsByClassName("tittle-heading-4")[0];

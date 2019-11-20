@@ -4,6 +4,7 @@ from django.db import models
 class Seller(models.Model):
     email = models.EmailField(db_index=True)
     seller_id = models.CharField(max_length=100, db_index=True)
+    seller_name = models.CharField(max_length=255, blank=True, null=True)
 
     def __str__(self):
         return self.seller_id
@@ -30,6 +31,7 @@ class AnalysisResult(models.Model):
     media_score = models.FloatField()
     feedback_score = models.FloatField()
     extra_content_score = models.FloatField()
+    seller_image_url = models.URLField(blank=True, null=True)
 
 
 class ProductAnalysisResult(models.Model):

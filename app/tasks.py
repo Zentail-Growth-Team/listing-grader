@@ -1,5 +1,6 @@
 import requests
 from background_task import background
+from bs4 import BeautifulSoup
 from django.conf import settings
 from .analysis_utils import analyze_products, calculate_product_scores
 from .models import Submission, ProductAnalysisResult, AnalysisResult
@@ -10,6 +11,14 @@ from .webflow_utils import send_to_webflow
 def process_submission(submission_id):
     try:
         submission = Submission.objects.get(id=submission_id)
+        seller_page = requests.get(f"https://www.amazon.com/sp?seller={submission.seller.seller_id}")
+        bs = BeautifulSoup(seller_page.text)
+        seller_name = bs.find('sellerName').text if bs.find('sellerName') else ''
+        seller = submission.seller
+        seller.seller_name = seller_name
+        seller.save()
+        seller_image_attrs = bs.find(id='sellerLogo').attrs if bs.find(id='sellerLogo') else {}
+        seller_image_url = seller_image_attrs['src'] if 'src' in seller_image_attrs else ''
         full_product_list = []
         pagination = True
         page = 1
@@ -42,6 +51,8 @@ def process_submission(submission_id):
         seller_media_score_total = 0
         seller_reviews_score_total = 0
         seller_extra_score_total = 0
+        best_rated_product_image_url = ''
+        best_rated_product_score = 0
         for result in results:
             scores = calculate_product_scores(result)
             seller_title_score_total += scores['title_score']
@@ -84,10 +95,16 @@ def process_submission(submission_id):
                 num_reviews=result['ratings_and_reviews']['review_count'],
                 feature_image_url=result['media']['feature_image_url'],
             )
+            if result['ratings_and_reviews']['rating'] > best_rated_product_score:
+                if result['media']['feature_image_url']:
+                    best_rated_product_score = result['ratings_and_reviews']['rating']
+                    best_rated_product_image_url = result['media']['feature_image_url']
             new_product_analysis.save()
         seller_copy_score = (((seller_title_score_total/len(results))*.425) +
                              ((seller_description_score_total/len(results))*.425) +
                              ((seller_bullets_score_total/len(results))*.15))
+        if seller_image_url == '':
+            seller_image_url = best_rated_product_image_url
         new_seller_analysis = AnalysisResult(
             seller=submission.seller,
             submission=submission,
@@ -95,6 +112,7 @@ def process_submission(submission_id):
             media_score=seller_media_score_total/len(results),
             feedback_score=seller_reviews_score_total/len(results),
             extra_content_score=seller_extra_score_total/len(results),
+            seller_image_url=seller_image_url,
         )
         new_seller_analysis.save()
         print(results)
