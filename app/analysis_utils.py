@@ -3,7 +3,10 @@ import requests
 from bs4 import BeautifulSoup
 from django.conf import settings
 from io import BytesIO
-from PIL import Image, ImageColor
+from PIL import Image
+import logging
+
+logger = logging.getLogger(__name__)
 
 
 def has_numbers(string):
@@ -19,80 +22,82 @@ def contains_phone_num(string):
 
 
 def get_image_stats(url):
-    data = requests.get(url).content
-    im = Image.open(BytesIO(data))
-    width, height = im.size
+    try:
+        data = requests.get(url).content
+        im = Image.open(BytesIO(data))
+        width, height = im.size
+        # get whitespace percentage
+        px = im.load()
+        ws_ctr = 0
+        ws_threshold = 750  # pure white is 765
 
-    # get whitespace percentage
-    px = im.load()
-    ws_ctr = 0
-    ws_threshold = 750  # pure white is 765
+        x = 0
+        colored = 0
+        x_start = 0
+        x_end = 0
 
-    x = 0
-    colored = 0
-    x_start = 0
-    x_end = 0
-
-    # get the left most columns of ws
-    while x < width and colored == 0:
-        y = 0
-        while y < height and colored == 0:
-            if px[x, y][0] + px[x, y][1] + px[x, y][2] < ws_threshold:
-                colored = 1
-            y += 1
-        if colored == 0:
-            ws_ctr += height
-        else:
-            x_start = x
-        x += 1
-
-    # reset vars
-    x = width - 1
-    colored = 0
-
-    # get right most columns whitespace
-    while x >= x_start and colored == 0:
-        y = 0
-        while y < height and colored == 0:
-            if px[x, y][0] + px[x, y][1] + px[x, y][2] < ws_threshold:
-                colored = 1
-            y += 1
-        if colored == 0:
-            ws_ctr += height
-        else:
-            x_end = x
-        x -= 1
-
-    # reset vars
-    y = 0
-    colored = 0
-
-    # get the bottom rows ws
-    while y < height and colored == 0:
-        x = x_start
-        while x < x_end and colored == 0:
-            if px[x, y][0] + px[x, y][1] + px[x, y][2] < ws_threshold:
-                colored = 1
+        # get the left most columns of ws
+        while x < width and colored == 0:
+            y = 0
+            while y < height and colored == 0:
+                if px[x, y][0] + px[x, y][1] + px[x, y][2] < ws_threshold:
+                    colored = 1
+                y += 1
+            if colored == 0:
+                ws_ctr += height
+            else:
+                x_start = x
             x += 1
-        if colored == 0:
-            ws_ctr += x_end - x_start
-        y += 1
 
-    # reset vars
-    y = height - 1
-    colored = 0
+        # reset vars
+        x = width - 1
+        colored = 0
 
-    # get the top rows ws
-    while y >= 0 and colored == 0:
-        x = x_start
-        while x < x_end and colored == 0:
-            if px[x, y][0] + px[x, y][1] + px[x, y][2] < ws_threshold:
-                colored = 1
-            x += 1
-        if colored == 0:
-            ws_ctr += x_end - x_start
-        y -= 1
+        # get right most columns whitespace
+        while x >= x_start and colored == 0:
+            y = 0
+            while y < height and colored == 0:
+                if px[x, y][0] + px[x, y][1] + px[x, y][2] < ws_threshold:
+                    colored = 1
+                y += 1
+            if colored == 0:
+                ws_ctr += height
+            else:
+                x_end = x
+            x -= 1
 
+        # reset vars
+        y = 0
+        colored = 0
+
+        # get the bottom rows ws
+        while y < height and colored == 0:
+            x = x_start
+            while x < x_end and colored == 0:
+                if px[x, y][0] + px[x, y][1] + px[x, y][2] < ws_threshold:
+                    colored = 1
+                x += 1
+            if colored == 0:
+                ws_ctr += x_end - x_start
+            y += 1
+
+        # reset vars
+        y = height - 1
+        colored = 0
+
+        # get the top rows ws
+        while y >= 0 and colored == 0:
+            x = x_start
+            while x < x_end and colored == 0:
+                if px[x, y][0] + px[x, y][1] + px[x, y][2] < ws_threshold:
+                    colored = 1
+                x += 1
+            if colored == 0:
+                ws_ctr += x_end - x_start
+            y -= 1
+    except TypeError:
+        logging.error(f"Problem processing image: {url}")
+        return None, None, None
     return width, height, ws_ctr / (height * width)
 
 
@@ -111,6 +116,7 @@ def analyze_products(products_list):
         if response.status_code == 200:
             product_data = response.json()
             print("Product data received")
+            print(product_data)
             try:
                 description = product_data['product_description'] if 'product_description' in product_data else ''
                 feature_bullets = product_data['feature_bullets'] if 'feature_bullets' in product_data else []
@@ -298,6 +304,8 @@ def analyze_media(images, videos):
     high_whitespace_images = 0
     for image in images:
         width, height, whitespace = get_image_stats(image)
+        if not width or not height or not whitespace:
+            continue
         # Num images > 1000x1000px
         if width < 1000 and height < 1000:
             low_qual_images += 1

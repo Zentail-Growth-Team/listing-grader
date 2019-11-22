@@ -25,7 +25,7 @@ class Submission(models.Model):
 
 class AnalysisResult(models.Model):
     seller = models.ForeignKey(Seller, on_delete=models.CASCADE)
-    submission = models.OneToOneField(Submission, on_delete=models.CASCADE)
+    submission = models.ForeignKey(Submission, on_delete=models.CASCADE)
     results_url = models.URLField(blank=True, null=True)
     copy_score = models.FloatField()
     media_score = models.FloatField()

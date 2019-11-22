@@ -42,9 +42,8 @@ def process_submission(submission_id):
             else:
                 # TODO: Log errors
                 pass
-        print(full_product_list)
         results = analyze_products(full_product_list)
-        print(results)
+        print('********Finished analyzing all products')
         seller_title_score_total = 0
         seller_description_score_total = 0
         seller_bullets_score_total = 0
@@ -54,6 +53,7 @@ def process_submission(submission_id):
         best_rated_product_image_url = ''
         best_rated_product_score = 0
         for result in results:
+            print(f"Calculating scores for {result['product_id']}")
             scores = calculate_product_scores(result)
             seller_title_score_total += scores['title_score']
             seller_description_score_total += scores['description_score']
@@ -105,6 +105,7 @@ def process_submission(submission_id):
                              ((seller_bullets_score_total/len(results))*.15))
         if seller_image_url == '':
             seller_image_url = best_rated_product_image_url
+        print('Save analysis')
         new_seller_analysis = AnalysisResult(
             seller=submission.seller,
             submission=submission,
@@ -115,7 +116,7 @@ def process_submission(submission_id):
             seller_image_url=seller_image_url,
         )
         new_seller_analysis.save()
-        print(results)
+        print('Saved')
         send_to_webflow(submission_id)
 
     except Submission.DoesNotExist:

@@ -1,3 +1,4 @@
+Pillow
 beautifulsoup4==4.8.1
 Django==2.2.6
 django-background-tasks==1.2.0
@@ -6,3 +7,4 @@ djangorestframework==3.10.3
 pytz==2019.3
 sqlparse==0.3.0
 validate-email==1.3
+Webflowpy==0.0.2

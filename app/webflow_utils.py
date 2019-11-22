@@ -11,28 +11,25 @@ def send_to_webflow(submission_id):
     products = ProductAnalysisResult.objects.filter(submission=submission)
 
     webflow_api = Webflow(token=settings.WEBFLOW_TOKEN)
-    print(webflow_api.sites())
-    print(webflow_api.collections(settings.WEBFLOW_SITE_ID))
-    # print(webflow_api.items(collection_id='5d07dc9098631121897d2d02'))
 
     products_list = []
     for product in products:
         products_list.append(model_to_dict(product))
     fields = {
-        'name': 'Analysis-results',
-        'Seller ID': submission.seller_id,
-        'Copy Score': analysis.copy_score,
-        'Media Score': analysis.media_score,
-        'Feedback Score': analysis.feedback_score,
-        'Extra Content Score': analysis.extra_content_score,
-        'Submission Timestamp': submission.timestamp.strftime('%m/%d/%Y %I:%M %p'),
-        'Product JSON Blob': products_list,
+        'name': submission.seller.seller_id,
+        'copy-score': analysis.copy_score,
+        'media-score': analysis.media_score,
+        'feedback-score': analysis.feedback_score,
+        'extra-content-score': analysis.extra_content_score,
+        'submission-timestamp': submission.timestamp.isoformat(),
+        'product-json-blob': products_list,
+        'seller-image-url': analysis.seller_image_url,
+        'seller-title': submission.seller.seller_name,
         '_archived': False,
         '_draft': False
     }
 
-    print(fields)
     data = {'fields': fields}
     json_data = json.dumps(data)
-    print(json_data)
-    #item = webflow_api.createItem('5db07b5331da36426bfa34f1', json_data, live=True)
+    item = webflow_api.createItem(settings.WEBFLOW_COLLECTION, json_data, live=True)
+    print(item)
