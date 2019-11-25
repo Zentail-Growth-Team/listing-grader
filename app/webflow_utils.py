@@ -1,8 +1,11 @@
+import logging
 import json
 from django.conf import settings
 from django.forms.models import model_to_dict
 from webflowpy.Webflow import Webflow
 from .models import Submission, AnalysisResult, ProductAnalysisResult
+
+logger = logging.getLogger(__name__)
 
 
 def send_to_webflow(submission_id):
@@ -23,7 +26,6 @@ def send_to_webflow(submission_id):
         'extra-content-score': analysis.extra_content_score,
         'submission-timestamp': submission.timestamp.isoformat(),
         'product-json-blob': products_list,
-        'seller-image-url': analysis.seller_image_url,
         'seller-title': submission.seller.seller_name,
         '_archived': False,
         '_draft': False
@@ -32,4 +34,17 @@ def send_to_webflow(submission_id):
     data = {'fields': fields}
     json_data = json.dumps(data)
     item = webflow_api.createItem(settings.WEBFLOW_COLLECTION, json_data, live=True)
-    print(item)
+    logger.info(item)
+    fields = {
+        'header-image': analysis.seller_image_url,
+        '_archived': False,
+        '_draft': False,
+        'name': submission.seller.seller_id,
+        'slug': submission.seller.seller_id,
+    }
+
+    data = {'fields': fields}
+    json_data = json.dumps(data)
+    response = webflow_api.updateItem(settings.WEBFLOW_COLLECTION, "5ddc1df9e5a89e02512f66f6",
+                                      json_data, live=True)
+    logger.info(response)
