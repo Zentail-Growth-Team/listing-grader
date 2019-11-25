@@ -13,7 +13,7 @@ def process_submission(submission_id):
         submission = Submission.objects.get(id=submission_id)
         seller_page = requests.get(f"https://www.amazon.com/sp?seller={submission.seller.seller_id}")
         bs = BeautifulSoup(seller_page.text)
-        seller_name = bs.find('sellerName').text if bs.find('sellerName') else ''
+        seller_name = bs.find(id='sellerName').text if bs.find(id='sellerName') else ''
         seller = submission.seller
         seller.seller_name = seller_name
         seller.save()
