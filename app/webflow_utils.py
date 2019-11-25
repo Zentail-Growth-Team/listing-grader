@@ -45,6 +45,6 @@ def send_to_webflow(submission_id):
 
     data = {'fields': fields}
     json_data = json.dumps(data)
-    response = webflow_api.updateItem(settings.WEBFLOW_COLLECTION, "5ddc1df9e5a89e02512f66f6",
+    response = webflow_api.updateItem(settings.WEBFLOW_COLLECTION, item['_id'],
                                       json_data, live=True)
     logger.info(response)
