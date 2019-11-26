@@ -25,7 +25,7 @@ SECRET_KEY = '-g+ln+)t==jgw!tne^3^u4-09q_d_!$pw6o(7m3-agj(k+z^-c'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['45.55.104.61', '127.0.0.1']
 
 
 # Application definition
@@ -102,7 +102,7 @@ LOGGING = {
         'file': {
             'level': 'INFO',
             'class': 'logging.FileHandler',
-            'filename': os.path.join(BASE_DIR, 'listing_grader.log'),
+            'filename': os.path.join(BASE_DIR, 'listing_grader_django.log'),
             'formatter': 'verbose',
         },
     },

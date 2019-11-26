@@ -21,8 +21,7 @@ function expand_product(id) {
 }
 json = json.replace(/\u00a0/g, ' ');
 json = json.replace(/&#39;/g,"'");
-json = json.replace(/List \[/g, "[");
-json = json.replace(/Map {/g, "{");
+json = json.replace(/&amp;/g,"&");
 JSON.parse(json.replace(/&quot;/g,'"')).forEach(function(product) {
     num_of_products = num_of_products + 1;
     pr.id = "Table-row-" + num_of_products;
@@ -30,7 +29,7 @@ JSON.parse(json.replace(/&quot;/g,'"')).forEach(function(product) {
     pr_expand.setAttribute("style", "height: 0px;");
     pr.onclick = function (){expand_product(this.id)};
     let title = (pr.getElementsByClassName("second")[0]).getElementsByClassName("tittle-heading-4")[0];
-    title.innerText = product.title;
+    title.innerText = product.title.replace(/\[replace-quote\]/g, "\"").replace(/\[replace-single\]/g, "\'");
     let reviews = (pr.getElementsByClassName("fourth")[0]).getElementsByClassName("tittle-heading-4")[0];
     reviews.innerText = product.num_reviews + " Customer Reviews";
     let copy_score = Math.round((product.title_score*.425) + (product.description_score*.425) + (product.bullets_score));

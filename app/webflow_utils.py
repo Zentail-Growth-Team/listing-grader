@@ -25,7 +25,7 @@ def send_to_webflow(submission_id):
         'feedback-score': analysis.feedback_score,
         'extra-content-score': analysis.extra_content_score,
         'submission-timestamp': submission.timestamp.isoformat(),
-        'product-json-blob': products_list,
+        'product-json-blob': json.dumps(products_list),
         'seller-title': submission.seller.seller_name,
         '_archived': False,
         '_draft': False

@@ -22,8 +22,7 @@ def process_submission(submission_id):
             seller = submission.seller
             seller.seller_name = seller_name
             seller.save()
-            seller_image_attrs = bs.find(id='sellerLogo').attrs if bs.find(id='sellerLogo') else {}
-            seller_image_url = seller_image_attrs['src'] if 'src' in seller_image_attrs else ''
+            seller_image_url = ''
             full_product_list = []
             pagination = True
             page = 1
@@ -45,8 +44,7 @@ def process_submission(submission_id):
                     except KeyError:
                         logger.info('key error')
                 else:
-                    # TODO: Log errors
-                    pass
+                    logger.error(response.content)
             results = analyze_products(full_product_list)
             logger.info('********Finished analyzing all products')
             seller_title_score_total = 0
@@ -65,11 +63,13 @@ def process_submission(submission_id):
                 seller_bullets_score_total += scores['bullets_score']
                 seller_media_score_total += scores['media_score']
                 seller_reviews_score_total += scores['ratings_and_reviews_score']
+                updated_title = result['title']['title'].replace('"', '[replace-quote]')
+                updated_title = updated_title.replace("'", '[replace-single]')
                 new_product_analysis = ProductAnalysisResult(
                     seller=submission.seller,
                     submission=submission,
                     product=result['product_id'],
-                    title=result['title']['title'][0:255],
+                    title=updated_title[0:255],
                     title_score=scores['title_score'],
                     title_character_count=result['title']['num_chars'],
                     title_contains_promo_phrase=result['title']['contains_promo_phrase'],
