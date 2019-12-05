@@ -179,7 +179,7 @@ def analyze_title(title):
 
     # Checking for SEO-adverse characters
     bad_chars = ['~', '!', '*', '$', '?', '_', '~', '{', '}', '[', ']', '#', '&lt;', '>', '|', '*', ';', '/', '^',
-                '¬', '¦']
+                 '¬', '¦', '&']
     if any(char in title for char in bad_chars):
         contains_seo_adverse_chars = True
     else:
@@ -187,7 +187,8 @@ def analyze_title(title):
 
     # Checking for word-by-word violations
     title_keywords = []
-    ignore = ['with', 'of', 'and', 'or', 'to', 'the', 'a', 'an', 'at', 'for', 'in', 'over', 'on', 'iPhone', 'iPad']
+    ignore = ['with', 'of', 'and', 'or', 'to', 'the', 'a', 'an', 'at', 'for', 'in', 'over', 'on', 'iPhone',
+              'iPad', 'by']
     num_lower_case = 0
     num_all_caps = 0
     num_incorrect_caps = 0
@@ -344,24 +345,25 @@ def calculate_product_scores(product):
 
     description_score = 0
     description = product['description']
-    if description['char_count'] >= 250:
-        description_score += 8
-    if description['char_count'] >= 500:
-        description_score += 7
-    if description['char_count'] >= 1500:
-        description_score += 5
-    if 1600 <= description['char_count'] <= 2100:
-        description_score += 5
-    if not description['contains_quotes']:
-        description_score += 5
-    if not description['contains_html']:
-        description_score += 5
-    if not description['contains_price_condition_info']:
-        description_score += 5
-    if not description['contains_shipping_info']:
-        description_score += 5
-    if not description['contains_contact_info']:
-        description_score += 15
+    if description['char_count'] != 0:
+        if description['char_count'] >= 250:
+            description_score += 8
+        if description['char_count'] >= 500:
+            description_score += 7
+        if description['char_count'] >= 1500:
+            description_score += 5
+        if 1600 <= description['char_count'] <= 2100:
+            description_score += 5
+        if not description['contains_quotes']:
+            description_score += 5
+        if not description['contains_html']:
+            description_score += 5
+        if not description['contains_price_condition_info']:
+            description_score += 5
+        if not description['contains_shipping_info']:
+            description_score += 5
+        if not description['contains_contact_info']:
+            description_score += 15
 
     bullets_score = 0
     bullets = product['bullets']
@@ -377,7 +379,7 @@ def calculate_product_scores(product):
     media_score = 0
     media = product['media']
     if media['num_images'] >= 5:
-        media_score += 30
+        media_score += 35
     if media['num_images'] >= 6:
         media_score += 15
     if media['num_images'] >= 7:
@@ -387,9 +389,9 @@ def calculate_product_scores(product):
     if media['num_images'] < 10:
         media_score += 10
     if media['low_qual_images'] < 1:
-        media_score += 20
+        media_score += 25
     if media['num_videos'] >= 1:
-        media_score += 10
+        media_score += 0
 
     ratings_and_reviews_score = 0
     ratings_and_reviews = product['ratings_and_reviews']

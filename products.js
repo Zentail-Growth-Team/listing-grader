@@ -1,10 +1,9 @@
-let ok_check_mark_url = "https://assets.website-files.com/5d60672844a280322e776b37/5d856c118de89c48f98b29a8_icons8-ok.svg";
-let exclamation_url = "https://assets.website-files.com/5d60672844a280322e776b37/5d856c7e9d773336f7b25fc3_icons8-box-important%20(1).svg";
+let ok = "https://assets.website-files.com/5d60672844a280322e776b37/5d856c118de89c48f98b29a8_icons8-ok.svg";
+let ex = "https://assets.website-files.com/5d60672844a280322e776b37/5d856c7e9d773336f7b25fc3_icons8-box-important%20(1).svg";
 let product_table = document.getElementById("product-table");
 let pr = document.getElementById("Table-row");
 let pr_expand = document.getElementById("Table-row-expand");
 let num_of_products = 0;
-
 function expand_product(id) {
     let row_to_exp = document.getElementById("Table-row-expand-" + id.replace("Table-row-", ""));
     let expand_sign = document.getElementById(id).getElementsByClassName('vertical')[0];
@@ -36,38 +35,38 @@ JSON.parse(json.replace(/&quot;/g,'"')).forEach(function(product) {
     let total_score = Math.round((copy_score + product.media_score + product.ratings_reviews_score)/3);
     let score_block = (pr.getElementsByClassName("score-block")[0]).getElementsByClassName("number")[0];
     score_block.innerText = total_score + "%";
-    let product_image_div = pr.getElementsByClassName("image-div")[0];
+    let pid = pr.getElementsByClassName("image-div")[0];
     if (product.feature_image_url == null){
-        product_image_div.setAttribute("style", "background-image: url('')")
+        pid.setAttribute("style", "background-image: url('')")
     }
     else{
-        product_image_div.setAttribute("style", "background-image: url('" + product.feature_image_url +"')")
+        pid.setAttribute("style", "background-image: url('" + product.feature_image_url +"')")
     }
-    let star_icons = (pr.getElementsByClassName("third")[0]).getElementsByClassName("star-icon");
+    let si = (pr.getElementsByClassName("third")[0]).getElementsByClassName("star-icon");
     if (product.rating < 1){
-        star_icons[0].classList.add("gray");
-        star_icons[1].classList.add("gray");
-        star_icons[2].classList.add("gray");
-        star_icons[3].classList.add("gray");
-        star_icons[4].classList.add("gray");
+        si[0].classList.add("gray");
+        si[1].classList.add("gray");
+        si[2].classList.add("gray");
+        si[3].classList.add("gray");
+        si[4].classList.add("gray");
     }
     else if (product.rating < 2){
-        star_icons[1].classList.add("gray");
-        star_icons[2].classList.add("gray");
-        star_icons[3].classList.add("gray");
-        star_icons[4].classList.add("gray");
+        si[1].classList.add("gray");
+        si[2].classList.add("gray");
+        si[3].classList.add("gray");
+        si[4].classList.add("gray");
     }
     else if (product.rating < 3){
-        star_icons[2].classList.add("gray");
-        star_icons[3].classList.add("gray");
-        star_icons[4].classList.add("gray");
+        si[2].classList.add("gray");
+        si[3].classList.add("gray");
+        si[4].classList.add("gray");
     }
     else if (product.rating < 4){
-        star_icons[3].classList.add("gray");
-        star_icons[4].classList.add("gray");
+        si[3].classList.add("gray");
+        si[4].classList.add("gray");
     }
     else if (product.rating < 5){
-        star_icons[4].classList.add("gray");
+        si[4].classList.add("gray");
     }
 
     let scores = pr_expand.getElementsByTagName("span");
@@ -92,129 +91,127 @@ JSON.parse(json.replace(/&quot;/g,'"')).forEach(function(product) {
 
     let checks = pr_expand.getElementsByTagName("img");
     if (product.title_num_all_caps === 0) {
-        checks[0].src = ok_check_mark_url
+        checks[0].src = ok
     }
     else {
-        checks[0].src = exclamation_url
+        checks[0].src = ex
     }
     if ((product.title_character_count >= 80) && (product.title_character_count <= 120)) {
-        checks[2].src = ok_check_mark_url
+        checks[2].src = ok
     }
     else {
-        checks[2].src = exclamation_url
+        checks[2].src = ex
     }
     if (product.title_num_incorrect_caps === 0) {
-        checks[4].src = ok_check_mark_url
+        checks[4].src = ok
     }
     else {
-        checks[4].src = exclamation_url
+        checks[4].src = ex
     }
     if (product.title_contains_seo_adverse_chars === false) {
-        checks[5].src = ok_check_mark_url
+        checks[5].src = ok
     }
     else {
-        checks[5].src = exclamation_url
+        checks[5].src = ex
     }
     if (product.title_contains_ascii === false) {
-        checks[6].src = ok_check_mark_url
+        checks[6].src = ok
     }
     else {
-        checks[6].src = exclamation_url
+        checks[6].src = ex
     }
     if (product.title_contains_promo_phrase === false) {
-        checks[7].src = ok_check_mark_url
+        checks[7].src = ok
     }
     else {
-        checks[7].src = exclamation_url
+        checks[7].src = ex
     }
     if (product.description_num_lower_case_bullets === 0) {
-        checks[8].src = ok_check_mark_url
+        checks[8].src = ok
     }
     else {
-        checks[8].src = exclamation_url
+        checks[8].src = ex
     }
     if (product.description_num_bullets >= 5) {
-        checks[9].src = ok_check_mark_url
+        checks[9].src = ok
     }
     else {
-        checks[9].src = exclamation_url
+        checks[9].src = ex
     }
     if (product.description_contains_html === false) {
-        checks[10].src = ok_check_mark_url
+        checks[10].src = ok
     }
     else {
-        checks[10].src = exclamation_url
+        checks[10].src = ex
     }
     if (product.description_character_count >= 250) {
-        checks[11].src = ok_check_mark_url
+        checks[11].src = ok
     }
     else {
-        checks[11].src = exclamation_url
+        checks[11].src = ex
     }
     if (product.description_contains_quotes === false) {
-        checks[12].src = ok_check_mark_url
+        checks[12].src = ok
     }
     else {
-        checks[12].src = exclamation_url
+        checks[12].src = ex
     }
     if (product.description_contains_price_condition_info === false) {
-        checks[13].src = ok_check_mark_url
+        checks[13].src = ok
     }
     else {
-        checks[13].src = exclamation_url
+        checks[13].src = ex
     }
     if (product.description_contains_shipping_info === false) {
-        checks[14].src = ok_check_mark_url
+        checks[14].src = ok
     }
     else {
-        checks[14].src = exclamation_url
+        checks[14].src = ex
     }
     if (product.description_contains_contact_info === false) {
-        checks[15].src = ok_check_mark_url
+        checks[15].src = ok
     }
     else {
-        checks[15].src = exclamation_url
+        checks[15].src = ex
     }
     if (product.media_low_qual_images === 0) {
-        checks[17].src = ok_check_mark_url
+        checks[17].src = ok
     }
     else {
-        checks[17].src = exclamation_url
+        checks[17].src = ex
     }
     if (product.media_num_images >= 5) {
-        checks[18].src = ok_check_mark_url
+        checks[18].src = ok
     }
     else {
-        checks[18].src = exclamation_url
+        checks[18].src = ex
     }
     if (product.media_num_videos >= 1) {
-        checks[19].src = ok_check_mark_url
+        checks[19].src = ok
     }
     else {
-        checks[19].src = exclamation_url
+        checks[19].src = ex
     }
     if (product.rating >= 4) {
-        checks[20].src = ok_check_mark_url
+        checks[20].src = ok
     }
     else {
-        checks[20].src = exclamation_url
+        checks[20].src = ex
     }
     if (product.num_reviews >= 20) {
-        checks[21].src = ok_check_mark_url
+        checks[21].src = ok
     }
     else {
-        checks[21].src = exclamation_url
+        checks[21].src = ex
     }
-
-    let text_value_fill_ins = pr_expand.getElementsByClassName("fill-in");
-    text_value_fill_ins[0].innerText = "Your character count is " + product.title_character_count;
-    text_value_fill_ins[1].innerText = "Your listing has " + product.description_num_bullets + " bullet point(s)";
-    text_value_fill_ins[2].innerText = "Your character count is " + product.description_character_count;
-    text_value_fill_ins[3].innerText = "Your image count is " + product.media_num_images;
-    text_value_fill_ins[4].innerText = "Your video count is " + product.media_num_videos;
-    text_value_fill_ins[5].innerText = "The average rating is " + product.rating + " stars";
-    text_value_fill_ins[6].innerText = "Your product has " + product.num_reviews + " review(s)";
-
+    let fill_ins = pr_expand.getElementsByClassName("fill-in");
+    fill_ins[0].innerText = "Your character count is " + product.title_character_count;
+    fill_ins[1].innerText = "Your listing has " + product.description_num_bullets + " bullet point(s)";
+    fill_ins[2].innerText = "Your character count is " + product.description_character_count;
+    fill_ins[3].innerText = "Your image count is " + product.media_num_images;
+    fill_ins[4].innerText = "Your video count is " + product.media_num_videos;
+    fill_ins[5].innerText = "The average rating is " + product.rating + " stars";
+    fill_ins[6].innerText = "Your product has " + product.num_reviews + " review(s)";
     if(num_of_products !== 1){
         product_table.appendChild(pr);
         product_table.appendChild(pr_expand);
@@ -225,3 +222,8 @@ JSON.parse(json.replace(/&quot;/g,'"')).forEach(function(product) {
 if(num_of_products !== 0){
     document.getElementById("Table-Row-Sec").removeAttribute("hidden");
 }
+let n = document.getElementsByClassName('skill-progress');
+n[0].setAttribute("style", "height: "+ cs +"%; " + n[0].getAttribute("style"));
+n[1].setAttribute("style", "height: "+ ms +"%; " + n[1].getAttribute("style"));
+n[2].setAttribute("style", "height: "+ es +"%; " + n[2].getAttribute("style"));
+n[3].setAttribute("style", "height: "+ rs +"%; " + n[3].getAttribute("style"));
