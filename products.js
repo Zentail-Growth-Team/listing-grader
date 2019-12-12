@@ -184,6 +184,12 @@ JSON.parse(json.replace(/&quot;/g,'"')).forEach(function(product) {
     else {
         checks[15].src = ex
     }
+    if (product.extra_content_score === 0) {
+        checks[16].src = ex
+    }
+    else {
+        checks[16].src = ok
+    }
     if (product.media_low_qual_images === 0) {
         checks[17].src = ok
     }
