@@ -130,6 +130,8 @@ def analyze_products(products_list):
                 bullets_results = analyze_bullets(feature_bullets)
                 print("Analyze media")
                 media_results = analyze_media(images, videos)
+                print("Analyze extra content")
+                extra_content_results = 100 if 'aplus_html' in product_data and product_data['aplus_html'] is not None else 0
                 results.append({
                     "product_id": product_id,
                     "title": title_results,
@@ -139,7 +141,8 @@ def analyze_products(products_list):
                     "ratings_and_reviews": {
                         "rating": product_data['stars'] if product_data['stars'] else 0,
                         "review_count": product_data['review_count'] if product_data['review_count'] else 0,
-                    }
+                    },
+                    "extra_content": extra_content_results
                 })
             except KeyError:
                 print('Key Error with data')
@@ -286,7 +289,7 @@ def analyze_bullets(feature_bullets):
     num_lower_case_bullets = 0
     for bullet in feature_bullets:
         bullet = bullet.replace('\'', '')
-        if bullet[0].isupper() and not has_numbers(bullet):
+        if bullet[0].islower() and not has_numbers(bullet):
             num_lower_case_bullets += 1
 
     num_bullets = len(feature_bullets)

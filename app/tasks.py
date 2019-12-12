@@ -63,6 +63,7 @@ def process_submission(submission_id):
                 seller_bullets_score_total += scores['bullets_score']
                 seller_media_score_total += scores['media_score']
                 seller_reviews_score_total += scores['ratings_and_reviews_score']
+                seller_extra_score_total += result['extra_content']
                 updated_title = result['title']['title'].replace('"', '[replace-quote]')
                 updated_title = updated_title.replace("'", '[replace-single]')
                 new_product_analysis = ProductAnalysisResult(
@@ -99,6 +100,7 @@ def process_submission(submission_id):
                     rating=result['ratings_and_reviews']['rating'],
                     num_reviews=result['ratings_and_reviews']['review_count'],
                     feature_image_url=result['media']['feature_image_url'],
+                    extra_content_score=result['extra_content']
                 )
                 if result['ratings_and_reviews']['rating'] > best_rated_product_score:
                     if result['media']['feature_image_url']:

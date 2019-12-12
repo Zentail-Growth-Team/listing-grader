@@ -2,7 +2,7 @@ let ok = "https://assets.website-files.com/5d60672844a280322e776b37/5d856c118de8
 let ex = "https://assets.website-files.com/5d60672844a280322e776b37/5d856c7e9d773336f7b25fc3_icons8-box-important%20(1).svg";
 let product_table = document.getElementById("product-table");
 let pr = document.getElementById("Table-row");
-let pr_expand = document.getElementById("Table-row-expand");
+let pr_ex = document.getElementById("Table-row-expand");
 let num_of_products = 0;
 function expand_product(id) {
     let row_to_exp = document.getElementById("Table-row-expand-" + id.replace("Table-row-", ""));
@@ -24,8 +24,8 @@ json = json.replace(/&amp;/g,"&");
 JSON.parse(json.replace(/&quot;/g,'"')).forEach(function(product) {
     num_of_products = num_of_products + 1;
     pr.id = "Table-row-" + num_of_products;
-    pr_expand.id = "Table-row-expand-" + num_of_products;
-    pr_expand.setAttribute("style", "height: 0px;");
+    pr_ex.id = "Table-row-expand-" + num_of_products;
+    pr_ex.setAttribute("style", "height: 0px;");
     pr.onclick = function (){expand_product(this.id)};
     let title = (pr.getElementsByClassName("second")[0]).getElementsByClassName("tittle-heading-4")[0];
     title.innerText = product.title.replace(/\[replace-quote\]/g, "\"").replace(/\[replace-single\]/g, "\'");
@@ -51,25 +51,35 @@ JSON.parse(json.replace(/&quot;/g,'"')).forEach(function(product) {
         si[4].classList.add("gray");
     }
     else if (product.rating < 2){
+        si[0].classList.remove("gray");
         si[1].classList.add("gray");
         si[2].classList.add("gray");
         si[3].classList.add("gray");
         si[4].classList.add("gray");
     }
     else if (product.rating < 3){
+        si[0].classList.remove("gray");
+        si[1].classList.remove("gray");
         si[2].classList.add("gray");
         si[3].classList.add("gray");
         si[4].classList.add("gray");
     }
     else if (product.rating < 4){
+        si[0].classList.remove("gray");
+        si[1].classList.remove("gray");
+        si[2].classList.remove("gray");
         si[3].classList.add("gray");
         si[4].classList.add("gray");
     }
     else if (product.rating < 5){
+        si[0].classList.remove("gray");
+        si[1].classList.remove("gray");
+        si[2].classList.remove("gray");
+        si[3].classList.remove("gray");
         si[4].classList.add("gray");
     }
 
-    let scores = pr_expand.getElementsByTagName("span");
+    let scores = pr_ex.getElementsByTagName("span");
     if (copy_score >= 70){
         scores[0].innerHTML = "<strong id=\"copy-score\" class=\"color green\">" + copy_score + "/100</strong>";
     }
@@ -89,7 +99,7 @@ JSON.parse(json.replace(/&quot;/g,'"')).forEach(function(product) {
         scores[2].innerHTML = "<strong id=\"reviews-score\" class=\"color red\">" + product.ratings_reviews_score + "/100</strong>";
     }
 
-    let checks = pr_expand.getElementsByTagName("img");
+    let checks = pr_ex.getElementsByTagName("img");
     if (product.title_num_all_caps === 0) {
         checks[0].src = ok
     }
@@ -204,7 +214,7 @@ JSON.parse(json.replace(/&quot;/g,'"')).forEach(function(product) {
     else {
         checks[21].src = ex
     }
-    let fill_ins = pr_expand.getElementsByClassName("fill-in");
+    let fill_ins = pr_ex.getElementsByClassName("fill-in");
     fill_ins[0].innerText = "Your character count is " + product.title_character_count;
     fill_ins[1].innerText = "Your listing has " + product.description_num_bullets + " bullet point(s)";
     fill_ins[2].innerText = "Your character count is " + product.description_character_count;
@@ -214,10 +224,10 @@ JSON.parse(json.replace(/&quot;/g,'"')).forEach(function(product) {
     fill_ins[6].innerText = "Your product has " + product.num_reviews + " review(s)";
     if(num_of_products !== 1){
         product_table.appendChild(pr);
-        product_table.appendChild(pr_expand);
+        product_table.appendChild(pr_ex);
     }
     pr = pr.cloneNode(true);
-    pr_expand = pr_expand.cloneNode(true);
+    pr_ex = pr_ex.cloneNode(true);
 });
 if(num_of_products !== 0){
     document.getElementById("Table-Row-Sec").removeAttribute("hidden");
