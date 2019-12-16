@@ -26,6 +26,8 @@ JSON.parse(json.replace(/&quot;/g,'"')).forEach(function(product) {
     pr.id = "Table-row-" + num_of_products;
     pr_ex.id = "Table-row-expand-" + num_of_products;
     pr_ex.setAttribute("style", "height: 0px;");
+    let link = pr_ex.getElementsByClassName("link-to-amazon")[0];
+    link.setAttribute("href", "https://www.amazon.com/dp/" + product.product);
     pr.onclick = function (){expand_product(this.id)};
     let title = (pr.getElementsByClassName("second")[0]).getElementsByClassName("tittle-heading-4")[0];
     title.innerText = product.title.replace(/\[replace-quote\]/g, "\"").replace(/\[replace-single\]/g, "\'");
