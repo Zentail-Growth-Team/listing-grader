@@ -112,6 +112,12 @@ JSON.parse(json.replace(/&quot;/g,'"')).forEach(function(product) {
     else {
         checks[2].src = ex
     }
+    if (product.title_num_lower_case === 0) {
+        checks[3].src = ok
+    }
+    else {
+        checks[3].src = ex
+    }
     if (product.title_num_incorrect_caps === 0) {
         checks[4].src = ok
     }
