@@ -40,11 +40,13 @@ INSTALLED_APPS = [
     'rest_framework',
     'background_task',
     'app.apps.AppConfig',
+    'corsheaders',
 ]
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -73,6 +75,13 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'listing_grader.wsgi.application'
 
+CORS_ORIGIN_WHITELIST = [
+    "https://gradier.webflow.io",
+]
+
+CSRF_TRUSTED_ORIGINS = [
+    'gradier.webflow.io',
+]
 
 # Database
 # https://docs.djangoproject.com/en/2.2/ref/settings/#databases
