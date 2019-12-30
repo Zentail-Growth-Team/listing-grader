@@ -9,10 +9,6 @@ import logging
 logger = logging.getLogger(__name__)
 
 
-def has_numbers(string):
-    return any(char.isdigit() for char in string)
-
-
 def contains_phone_num(string):
     regexp = re.compile(r'[2-9]\d{2}-\d{3}-\d{4}$')
     if regexp.search(string):
@@ -289,7 +285,7 @@ def analyze_bullets(feature_bullets):
     num_lower_case_bullets = 0
     for bullet in feature_bullets:
         bullet = bullet.replace('\'', '')
-        if bullet[0].islower() and not has_numbers(bullet):
+        if bullet[0].islower() and bullet[0].isalpha():
             num_lower_case_bullets += 1
 
     num_bullets = len(feature_bullets)

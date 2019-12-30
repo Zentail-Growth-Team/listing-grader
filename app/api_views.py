@@ -45,9 +45,10 @@ def create_submission(request):
     ip_submissions = Submission.objects.filter(ip_address=ip_address,
                                                timestamp__gte=(timezone.now() -
                                                                timedelta(days=settings.SUBMISSIONS_TIMEDELTA_DAYS)))
-    if ip_submissions.count() > settings.SUBMISSIONS_ALLOWED:
-        return Response('It looks like you have already requested a listing analysis from Zentail',
-                        status=status.HTTP_200_OK)
+    if "zentail.com" not in seller_email:
+        if ip_submissions.count() > settings.SUBMISSIONS_ALLOWED:
+            return Response('It looks like you have already requested a listing analysis from Zentail',
+                            status=status.HTTP_200_OK)
 
     # Seller submission check
     try:
@@ -56,9 +57,10 @@ def create_submission(request):
                                                        timestamp__gte=(timezone.now() -
                                                                        timedelta(
                                                                            days=settings.SUBMISSIONS_TIMEDELTA_DAYS)))
-        if seller_submissions.count() > settings.SUBMISSIONS_ALLOWED:
-            return Response('It looks like you have already requested a listing analysis from Zentail',
-                            status=status.HTTP_200_OK)
+        if "zentail.com" not in seller_email:
+            if seller_submissions.count() > settings.SUBMISSIONS_ALLOWED:
+                return Response('It looks like you have already requested a listing analysis from Zentail',
+                                status=status.HTTP_200_OK)
     except Seller.DoesNotExist:
         seller = Seller.objects.create(email=seller_email, seller_id=seller_id)
 

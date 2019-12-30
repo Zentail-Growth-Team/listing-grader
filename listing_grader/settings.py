@@ -25,7 +25,7 @@ SECRET_KEY = '-g+ln+)t==jgw!tne^3^u4-09q_d_!$pw6o(7m3-agj(k+z^-c'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['45.55.104.61', '127.0.0.1']
+ALLOWED_HOSTS = ['45.55.104.61', '127.0.0.1', 'insights.zentail.com']
 
 
 # Application definition
