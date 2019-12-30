@@ -94,7 +94,7 @@ def send_to_webflow(submission_id):
             '_archived': False,
             '_draft': False,
             'name': submission.seller.seller_id,
-            'slug': submission.seller.seller_id,
+            'slug': item_json['slug'],
         }
 
         data = {'fields': fields}
