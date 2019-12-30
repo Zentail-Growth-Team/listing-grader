@@ -30,6 +30,7 @@ def send_to_webflow(submission_id):
         'seller-title': submission.seller.seller_name,
         '_archived': False,
         '_draft': False,
+        'slug': submission.seller.seller_id,
     }
 
     data = {'fields': fields}
@@ -41,23 +42,53 @@ def send_to_webflow(submission_id):
         'accept-version': VERSION,
         'Content-Type': 'application/json',
     }
-    print('FIRST POST')
-    item = requests.post(url=f"{DEFAULT_ENDPOINT}/collections/{settings.WEBFLOW_COLLECTION}/items?live=true", data=json_data,
-                         headers=headers)
-    item_json = item.json()
-    print(item_json)
-    logger.info(item_json)
-    if 'problems' in item_json:
-        if "Unique value is already in database" in item_json['problems'][0]:
-            item_id = item['path'].split('/')[-1]
-            print('FIRST PUT')
-            item = requests.put(url=f"{DEFAULT_ENDPOINT}/collections/{settings.WEBFLOW_COLLECTION}/items/{item_id}?live=true",
-                                data=json_data,
-                                headers=headers)
-            item_json = item.json()
-            print(item_json)
-            logger.info(item_json)
-    if '_id' in item_json:
+
+    # Check for existing analysis
+    if AnalysisResult.objects.filter(seller=submission.seller).count() > 1:
+        prev_results = AnalysisResult.objects.filter(seller=submission.seller).order_by('-submission__timestamp')
+        for result in prev_results:
+            if result.webflow_cms_id:
+                print('FIRST PUT')
+                item = requests.put(
+                    url=f"{DEFAULT_ENDPOINT}/collections/{settings.WEBFLOW_COLLECTION}/items/{result.webflow_cms_id}?live=true",
+                    data=json_data,
+                    headers=headers)
+                item_json = item.json()
+                print(item_json)
+                if 'problems' in item_json:
+                    logger.error(f"Problem uploading: {item_json}")
+                else:
+                    analysis.webflow_cms_id = item_json['_id']
+                    analysis.save()
+                    logger.info(item_json)
+                fields = {
+                    'header-image': analysis.seller_image_url,
+                    '_archived': False,
+                    '_draft': False,
+                    'name': submission.seller.seller_id,
+                    'slug': submission.seller.seller_id,
+                }
+                data = {'fields': fields}
+                json_data = json.dumps(data)
+                print('SECOND PUT')
+                response = requests.put(
+                    url=f"{DEFAULT_ENDPOINT}/collections/{settings.WEBFLOW_COLLECTION}/items/{item_json['_id']}?live=true",
+                    data=json_data,
+                    headers=headers)
+                print(response.json())
+                if 'problems' in item_json:
+                    logger.error(f"Problem uploading: {item_json}")
+                else:
+                    logger.info(item_json)
+                break
+
+    else:
+        print('FIRST POST')
+        item = requests.post(url=f"{DEFAULT_ENDPOINT}/collections/{settings.WEBFLOW_COLLECTION}/items?live=true", data=json_data,
+                             headers=headers)
+        item_json = item.json()
+        print(item_json)
+        logger.info(item_json)
         fields = {
             'header-image': analysis.seller_image_url,
             '_archived': False,
@@ -69,11 +100,17 @@ def send_to_webflow(submission_id):
         data = {'fields': fields}
         json_data = json.dumps(data)
         print('SECOND PUT')
-        response = requests.put(url=f"{DEFAULT_ENDPOINT}/collections/{settings.WEBFLOW_COLLECTION}/items/{item_json['_id']}?live=true",
-                                data=json_data,
-                                headers=headers)
+        response = requests.put(
+            url=f"{DEFAULT_ENDPOINT}/collections/{settings.WEBFLOW_COLLECTION}/items/{item_json['_id']}?live=true",
+            data=json_data,
+            headers=headers)
         print(response.json())
-        logger.info(response)
-    else:
-        logger.error(f"Problem uploading: {item_json}")
+        if 'problems' in item_json:
+            logger.error(f"Problem uploading: {item_json}")
+        else:
+            analysis.webflow_cms_id = item_json['_id']
+            analysis.save()
+            logger.info(item_json)
+
+
 

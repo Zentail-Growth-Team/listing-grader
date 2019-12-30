@@ -32,6 +32,7 @@ class AnalysisResult(models.Model):
     feedback_score = models.FloatField()
     extra_content_score = models.FloatField()
     seller_image_url = models.URLField(blank=True, null=True)
+    webflow_cms_id = models.CharField(max_length=255, blank=True, null=True)
 
 
 class ProductAnalysisResult(models.Model):
