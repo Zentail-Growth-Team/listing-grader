@@ -4,11 +4,11 @@ import requests
 from django.conf import settings
 from django.forms.models import model_to_dict
 from .models import Submission, AnalysisResult, ProductAnalysisResult
+from .zapier_utils import send_to_zapier
 
 logger = logging.getLogger(__name__)
 
-DEFAULT_ENDPOINT = 'https://api.webflow.com'
-VERSION = '1.0.0'
+RESULTS_BASE_URL = "https://gradier.webflow.io/analysis-result/"
 
 
 def send_to_webflow(submission_id):
@@ -39,7 +39,7 @@ def send_to_webflow(submission_id):
     headers = {
         'Accept': 'application/json',
         'Authorization': 'Bearer {token}'.format(token=settings.WEBFLOW_TOKEN),
-        'accept-version': VERSION,
+        'accept-version': settings.WEBFLOW_VERSION,
         'Content-Type': 'application/json',
     }
 
@@ -50,7 +50,7 @@ def send_to_webflow(submission_id):
             if result.webflow_cms_id:
                 print('FIRST PUT')
                 item = requests.put(
-                    url=f"{DEFAULT_ENDPOINT}/collections/{settings.WEBFLOW_COLLECTION}/items/{result.webflow_cms_id}?live=true",
+                    url=f"{settings.WEBFLOW_DEFAULT_ENDPOINT}/collections/{settings.WEBFLOW_COLLECTION}/items/{result.webflow_cms_id}?live=true",
                     data=json_data,
                     headers=headers)
                 item_json = item.json()
@@ -72,7 +72,7 @@ def send_to_webflow(submission_id):
                 json_data = json.dumps(data)
                 print('SECOND PUT')
                 response = requests.put(
-                    url=f"{DEFAULT_ENDPOINT}/collections/{settings.WEBFLOW_COLLECTION}/items/{item_json['_id']}?live=true",
+                    url=f"{settings.WEBFLOW_DEFAULT_ENDPOINT}/collections/{settings.WEBFLOW_COLLECTION}/items/{item_json['_id']}?live=true",
                     data=json_data,
                     headers=headers)
                 print(response.json())
@@ -80,11 +80,14 @@ def send_to_webflow(submission_id):
                     logger.error(f"Problem uploading: {item_json}")
                 else:
                     logger.info(item_json)
+                    send_to_zapier(submission.seller.email,
+                                   submission.seller.seller_id,
+                                   f"{RESULTS_BASE_URL}{submission.seller.seller_id}")
                 break
 
     else:
         print('FIRST POST')
-        item = requests.post(url=f"{DEFAULT_ENDPOINT}/collections/{settings.WEBFLOW_COLLECTION}/items?live=true", data=json_data,
+        item = requests.post(url=f"{settings.WEBFLOW_DEFAULT_ENDPOINT}/collections/{settings.WEBFLOW_COLLECTION}/items?live=true", data=json_data,
                              headers=headers)
         item_json = item.json()
         print(item_json)
@@ -101,7 +104,7 @@ def send_to_webflow(submission_id):
         json_data = json.dumps(data)
         print('SECOND PUT')
         response = requests.put(
-            url=f"{DEFAULT_ENDPOINT}/collections/{settings.WEBFLOW_COLLECTION}/items/{item_json['_id']}?live=true",
+            url=f"{settings.WEBFLOW_DEFAULT_ENDPOINT}/collections/{settings.WEBFLOW_COLLECTION}/items/{item_json['_id']}?live=true",
             data=json_data,
             headers=headers)
         print(response.json())
@@ -111,6 +114,9 @@ def send_to_webflow(submission_id):
             analysis.webflow_cms_id = item_json['_id']
             analysis.save()
             logger.info(item_json)
+            send_to_zapier(submission.seller.email,
+                           submission.seller.seller_id,
+                           f"{RESULTS_BASE_URL}{submission.seller.seller_id}")
 
 
 
