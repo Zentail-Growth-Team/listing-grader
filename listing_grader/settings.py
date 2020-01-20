@@ -77,10 +77,16 @@ WSGI_APPLICATION = 'listing_grader.wsgi.application'
 
 CORS_ORIGIN_WHITELIST = [
     "https://gradier.webflow.io",
+    "https://zentail-site-10-18-update.webflow.io",
+    "https://www.zentail.com"
+
 ]
 
 CSRF_TRUSTED_ORIGINS = [
     'gradier.webflow.io',
+    'zentail-site-10-18-update.webflow.io',
+    'www.zentail.com'
+
 ]
 
 # Database
@@ -178,3 +184,5 @@ WEBFLOW_DEFAULT_ENDPOINT = 'https://api.webflow.com'
 WEBFLOW_VERSION = '1.0.0'
 
 ZAPIER_WEBHOOK = 'https://hooks.zapier.com/hooks/catch/92396/otksap7/'
+
+MAX_ATTEMPTS = 2
