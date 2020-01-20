@@ -11,6 +11,30 @@ logger = logging.getLogger(__name__)
 RESULTS_BASE_URL = "https://gradier.webflow.io/analysis-result/"
 
 
+def get_letter_score(value):
+    if value >= 94:
+        return "A"
+    elif 93 >= value >= 90:
+        return "A-"
+    elif 87 >= value >= 89:
+        return "B+"
+    elif 83 >= value >= 86:
+        return "B"
+    elif 80 >= value >= 82:
+        return "B-"
+    elif 77 >= value >= 79:
+        return "C+"
+    elif 73 >= value >= 76:
+        return "C"
+    elif 70 >= value >= 72:
+        return "C-"
+    elif 67 >= value >= 69:
+        return "D+"
+    elif 60 >= value >= 66:
+        return "D"
+    else:
+        return "F"
+
 def send_to_webflow(submission_id):
     submission = Submission.objects.get(id=submission_id)
     analysis = AnalysisResult.objects.get(submission=submission)
@@ -19,6 +43,7 @@ def send_to_webflow(submission_id):
     products_list = []
     for product in products:
         products_list.append(model_to_dict(product))
+
     fields = {
         'name': submission.seller.seller_id,
         'copy-score': analysis.copy_score,
@@ -28,6 +53,10 @@ def send_to_webflow(submission_id):
         'submission-timestamp': submission.timestamp.isoformat(),
         'product-json-blob': json.dumps(products_list),
         'seller-title': submission.seller.seller_name,
+        'copy-letter': get_letter_score(analysis.copy_score),
+        'media-letter': get_letter_score(analysis.media_score),
+        'feedback-letter': get_letter_score(analysis.feedback_score),
+        'extra-content-letter': get_letter_score(analysis.extra_content_score),
         '_archived': False,
         '_draft': False,
         'slug': submission.seller.seller_id,
