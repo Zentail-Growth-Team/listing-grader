@@ -298,7 +298,10 @@ def analyze_bullets(feature_bullets):
 
 def analyze_media(images, videos):
     num_images = len(images)
-    num_videos = len(videos)
+    num_videos = 0
+    for video in videos:
+        if video['vendor'] == "Manufacturer Video" or video['vendor'] == "Seller Video":
+            num_videos += 1
 
     low_qual_images = 0
     high_whitespace_images = 0
