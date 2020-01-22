@@ -16,21 +16,21 @@ def get_letter_score(value):
         return "A"
     elif 93 >= value >= 90:
         return "A-"
-    elif 87 >= value >= 89:
+    elif 89 >= value >= 87:
         return "B+"
-    elif 83 >= value >= 86:
+    elif 86 >= value >= 83:
         return "B"
-    elif 80 >= value >= 82:
+    elif 82 >= value >= 80:
         return "B-"
-    elif 77 >= value >= 79:
+    elif 79 >= value >= 77:
         return "C+"
-    elif 73 >= value >= 76:
+    elif 76 >= value >= 73:
         return "C"
-    elif 70 >= value >= 72:
+    elif 72 >= value >= 70:
         return "C-"
-    elif 67 >= value >= 69:
+    elif 69 >= value >= 67:
         return "D+"
-    elif 60 >= value >= 66:
+    elif 66 >= value >= 60:
         return "D"
     else:
         return "F"
