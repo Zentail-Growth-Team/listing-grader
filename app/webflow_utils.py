@@ -129,7 +129,8 @@ def send_to_webflow(submission_id):
                     logger.info(item_json)
                     send_to_zapier(submission.seller.email,
                                    submission.seller.seller_id,
-                                   f"{RESULTS_BASE_URL}{submission.seller.seller_id}")
+                                   f"{RESULTS_BASE_URL}{submission.seller.seller_id}",
+                                   submission.seller.seller_name)
                 break
 
     else:
@@ -163,7 +164,8 @@ def send_to_webflow(submission_id):
             logger.info(item_json)
             send_to_zapier(submission.seller.email,
                            submission.seller.seller_id,
-                           f"{RESULTS_BASE_URL}{submission.seller.seller_id}")
+                           f"{RESULTS_BASE_URL}{submission.seller.seller_id}",
+                           submission.seller.seller_name)
 
 
 

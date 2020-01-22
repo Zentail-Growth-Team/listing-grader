@@ -6,11 +6,12 @@ from django.conf import settings
 logger = logging.getLogger(__name__)
 
 
-def send_to_zapier(seller_email, seller_id, results_url):
+def send_to_zapier(seller_email, seller_id, results_url, seller_name):
     data = {
         "seller_email": seller_email,
         "seller_id": seller_id,
-        "results_url": results_url
+        "results_url": results_url,
+        "seller_name": seller_name
     }
     json_data = json.dumps(data)
     headers = {
