@@ -25,7 +25,7 @@ SECRET_KEY = '-g+ln+)t==jgw!tne^3^u4-09q_d_!$pw6o(7m3-agj(k+z^-c'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
-ALLOWED_HOSTS = ['45.55.104.61', '127.0.0.1', 'insights.zentail.com']
+ALLOWED_HOSTS = ['45.55.104.61', '127.0.0.1', 'insights.zentail.com', 'localhost']
 
 
 # Application definition
@@ -181,7 +181,7 @@ WEBFLOW_TOKEN = '7626821a1e1e278cd5ae07a1c15f057dd4d25ef68d2cf34ece7863c0db59572
 #WEBFLOW_TOKEN = '01644e575106ed6302ecdda52dd8e1bb0d60757a16f4c4b9597fc1a65ca90c90'
 WEBFLOW_SITE_ID = '5bbe02f84941df1b66dda9b5'
 #WEBFLOW_SITE_ID = '5d60672844a280322e776b37'
-WEBFLOW_COLLECTION = '5e230ca8b966d9628c82290c'
+WEBFLOW_COLLECTION = '5e2861c48f10441879f85948'
 #WEBFLOW_COLLECTION = '5db07b5331da36426bfa34f1'
 WEBFLOW_DEFAULT_ENDPOINT = 'https://api.webflow.com'
 WEBFLOW_VERSION = '1.0.0'

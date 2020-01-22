@@ -35,6 +35,20 @@ def get_letter_score(value):
     else:
         return "F"
 
+
+def get_score_color(value):
+    if value >= 90:
+        return "#4BD2E1"
+    elif value >= 80:
+        return "#428AE7"
+    elif value >= 70:
+        return "#FDBE38"
+    elif value >= 60:
+        return "#ED8919"
+    else:
+        return "#F70D49"
+
+
 def send_to_webflow(submission_id):
     submission = Submission.objects.get(id=submission_id)
     analysis = AnalysisResult.objects.get(submission=submission)
@@ -57,6 +71,10 @@ def send_to_webflow(submission_id):
         'media-letter': get_letter_score(analysis.media_score),
         'feedback-letter': get_letter_score(analysis.feedback_score),
         'extra-content-letter': get_letter_score(analysis.extra_content_score),
+        'copy-score-color': get_score_color(analysis.copy_score),
+        'media-score-color': get_score_color(analysis.media_score),
+        'feedback-score-color': get_score_color(analysis.feedback_score),
+        'extra-content-score-color': get_score_color(analysis.extra_content_score),
         '_archived': False,
         '_draft': False,
         'slug': submission.seller.seller_id,

@@ -17,7 +17,7 @@ class Submission(models.Model):
     timestamp = models.DateTimeField(auto_now_add=True)
     seller = models.ForeignKey(Seller, on_delete=models.CASCADE)
     ip_address = models.GenericIPAddressField()
-    limit_results = models.IntegerField(default=100, help_text="Use '0' for no limit")
+    limit_results = models.IntegerField(default=20, help_text="Use '0' for no limit")
 
     def __str__(self):
         return f"{self.seller.seller_id} - {self.timestamp}"
