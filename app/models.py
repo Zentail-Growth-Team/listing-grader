@@ -22,7 +22,7 @@ class Submission(models.Model):
 
     def __str__(self):
         eastern = timezone('US/Eastern')
-        return f"{self.seller.seller_id} - {(self.timestamp.astimezone(eastern)).strftime('%b %d, %Y,  %H:%M %p')}"
+        return f"{self.seller.seller_id} - {(self.timestamp.astimezone(eastern)).strftime('%b %d, %Y,  %I:%M %p')}"
 
 
 class AnalysisResult(models.Model):
