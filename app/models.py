@@ -7,7 +7,7 @@ class Seller(models.Model):
     seller_name = models.CharField(max_length=255, blank=True, null=True)
 
     def __str__(self):
-        return self.seller_id
+        return f'{self.seller_name}-{self.seller_id}'
 
     class Meta:
         unique_together = ['email', 'seller_id']
