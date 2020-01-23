@@ -35,8 +35,23 @@ JSON.parse(json.replace(/&quot;/g,'"')).forEach(function(product) {
     reviews.innerText = product.num_reviews + " Customer Reviews";
     let copy_score = Math.round((product.title_score*.425) + (product.description_score*.425) + (product.bullets_score));
     let total_score = Math.round((copy_score + product.media_score + product.ratings_reviews_score)/3);
-    let score_block = (pr.getElementsByClassName("score-block")[0]).getElementsByClassName("number")[0];
-    score_block.innerText = total_score + "%";
+    let score_block = pr.getElementsByClassName("score-block")[0];
+    let score_block_number = score_block.getElementsByClassName("number")[0];
+    let score_color = "#F70D49";
+    if (total_score >= 90){
+        score_color = "#4BD2E1";
+    }
+    else if (total_score >= 80){
+        score_color = "#428AE7";
+    }
+    else if (total_score >= 70){
+        score_color = "#FDBE38";
+    }
+    else if (total_score >= 60){
+        score_color = "#ED8919";
+    }
+    score_block.setAttribute("style", "background-color:" + score_color + ";");
+    score_block_number.innerText = total_score + "%";
     let pid = pr.getElementsByClassName("image-div")[0];
     if (product.feature_image_url == null){
         pid.setAttribute("style", "background-image: url('')")
@@ -82,24 +97,48 @@ JSON.parse(json.replace(/&quot;/g,'"')).forEach(function(product) {
     }
 
     let scores = pr_ex.getElementsByTagName("span");
-    if (copy_score >= 70){
-        scores[0].innerHTML = "<strong id=\"copy-score\" class=\"color green\">" + copy_score + "/100</strong>";
+    let copy_color = "#F70D49";
+    let media_color = "#F70D49";
+    let reviews_color = "#F70D49";
+    if (copy_score >= 90){
+        copy_color = "#4BD2E1";
     }
-    else {
-        scores[0].innerHTML = "<strong id=\"copy-score\" class=\"color red\">" + copy_score + "/100</strong>";
+    else if (copy_score >= 80){
+        copy_color = "#428AE7";
     }
-    if (product.media_score >= 70){
-        scores[1].innerHTML = "<strong id=\"media-score\" class=\"color green\">" + product.media_score + "/100</strong>";
+    else if (copy_score >= 70){
+        copy_color = "#FDBE38";
     }
-    else {
-        scores[1].innerHTML = "<strong id=\"media-score\" class=\"color red\">" + product.media_score + "/100</strong>";
+    else if (copy_score >= 60){
+        copy_color = "#ED8919";
     }
-    if (product.ratings_reviews_score >= 70){
-        scores[2].innerHTML = "<strong id=\"reviews-score\" class=\"color green\">" + product.ratings_reviews_score + "/100</strong>";
+    if (product.media_score >= 90){
+        media_color = "#4BD2E1";
     }
-    else {
-        scores[2].innerHTML = "<strong id=\"reviews-score\" class=\"color red\">" + product.ratings_reviews_score + "/100</strong>";
+    else if (product.media_score >= 80){
+        media_color = "#428AE7";
     }
+    else if (product.media_score >= 70){
+        media_color = "#FDBE38";
+    }
+    else if (product.media_score >= 60){
+        media_color = "#ED8919";
+    }
+    if (product.ratings_reviews_score >= 90){
+        reviews_color = "#4BD2E1";
+    }
+    else if (product.ratings_reviews_score >= 80){
+        reviews_color = "#428AE7";
+    }
+    else if (product.ratings_reviews_score >= 70){
+        reviews_color = "#FDBE38";
+    }
+    else if (product.ratings_reviews_score >= 60){
+        reviews_color = "#ED8919";
+    }
+    scores[0].innerHTML = "<strong id=\"copy-score\" style=\"color:" + copy_color + "\">" + copy_score + "/100</strong>";
+    scores[1].innerHTML = "<strong id=\"media-score\" style=\"color:" + media_color + "\">" + product.media_score + "/100</strong>";
+    scores[2].innerHTML = "<strong id=\"reviews-score\" style=\"color:" + reviews_color + "\">" + product.ratings_reviews_score + "/100</strong>";
 
     let checks = pr_ex.getElementsByTagName("img");
     if (product.title_num_all_caps === 0) {
@@ -246,8 +285,3 @@ JSON.parse(json.replace(/&quot;/g,'"')).forEach(function(product) {
 if(num_of_products !== 0){
     document.getElementById("Table-Row-Sec").removeAttribute("hidden");
 }
-let n = document.getElementsByClassName('skill-progress');
-n[0].setAttribute("style", "height: "+ cs +"%; " + n[0].getAttribute("style"));
-n[1].setAttribute("style", "height: "+ ms +"%; " + n[1].getAttribute("style"));
-n[2].setAttribute("style", "height: "+ es +"%; " + n[2].getAttribute("style"));
-n[3].setAttribute("style", "height: "+ rs +"%; " + n[3].getAttribute("style"));
