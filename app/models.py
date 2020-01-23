@@ -1,4 +1,5 @@
 from django.db import models
+from pytz import timezone
 
 
 class Seller(models.Model):
@@ -20,7 +21,8 @@ class Submission(models.Model):
     limit_results = models.IntegerField(default=20, help_text="Use '0' for no limit")
 
     def __str__(self):
-        return f"{self.seller.seller_id} - {self.timestamp}"
+        eastern = timezone('US/Eastern')
+        return f"{self.seller.seller_id} - {(self.timestamp.astimezone(eastern)).strftime('%b %d, %Y,  %H:%M %p')}"
 
 
 class AnalysisResult(models.Model):
