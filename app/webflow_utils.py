@@ -8,7 +8,7 @@ from .zapier_utils import send_to_zapier
 
 logger = logging.getLogger(__name__)
 
-RESULTS_BASE_URL = "https://gradier.webflow.io/analysis-result/"
+RESULTS_BASE_URL = "https://www.zentail.com/analysis-results/"
 
 
 def get_letter_score(value):
