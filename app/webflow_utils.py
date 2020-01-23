@@ -4,11 +4,8 @@ import requests
 from django.conf import settings
 from django.forms.models import model_to_dict
 from .models import Submission, AnalysisResult, ProductAnalysisResult
-from .zapier_utils import send_to_zapier
 
 logger = logging.getLogger(__name__)
-
-RESULTS_BASE_URL = "https://www.zentail.com/analysis-results/"
 
 
 def get_letter_score(value):
@@ -127,10 +124,6 @@ def send_to_webflow(submission_id):
                     logger.error(f"Problem uploading: {item_json}")
                 else:
                     logger.info(item_json)
-                    send_to_zapier(submission.seller.email,
-                                   submission.seller.seller_id,
-                                   f"{RESULTS_BASE_URL}{submission.seller.seller_id}",
-                                   submission.seller.seller_name)
                 break
 
     else:
@@ -162,10 +155,6 @@ def send_to_webflow(submission_id):
             analysis.webflow_cms_id = item_json['_id']
             analysis.save()
             logger.info(item_json)
-            send_to_zapier(submission.seller.email,
-                           submission.seller.seller_id,
-                           f"{RESULTS_BASE_URL}{submission.seller.seller_id}",
-                           submission.seller.seller_name)
 
 
 

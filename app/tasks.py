@@ -7,8 +7,11 @@ from django.db import transaction
 from .analysis_utils import analyze_products, calculate_product_scores
 from .models import Submission, ProductAnalysisResult, AnalysisResult
 from .webflow_utils import send_to_webflow
+from .zapier_utils import send_to_zapier
 
 logger = logging.getLogger(__name__)
+
+RESULTS_BASE_URL = "https://www.zentail.com/analysis-results/"
 
 
 @background()
@@ -125,6 +128,22 @@ def process_submission(submission_id):
             new_seller_analysis.save()
             logger.info('Saved')
             send_to_webflow(submission_id)
+            send_to_zapier(submission.seller.email,
+                           submission.seller.seller_id,
+                           f"{RESULTS_BASE_URL}{submission.seller.seller_id}",
+                           submission.seller.seller_name,
+                           "success")
 
         except Submission.DoesNotExist:
-            logging.error(f"{submission_id} does not exist")
+            logger.error(f"{submission_id} does not exist")
+        except Exception as e:
+            logger.error(f"{submission_id} could not be processed properly. Exception: {e}")
+            try:
+                send_to_zapier(submission.seller.email,
+                               submission.seller.seller_id,
+                               "",
+                               submission.seller.seller_name,
+                               "fail")
+            except Exception as e:
+                logger.error(f"Couldn't send to Zapier: {e}")
+
