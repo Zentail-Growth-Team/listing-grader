@@ -11,7 +11,7 @@ from .zapier_utils import send_to_zapier
 
 logger = logging.getLogger(__name__)
 
-RESULTS_BASE_URL = "https://www.zentail.com/analysis-results/"
+RESULTS_BASE_URL = "https://www.zentail.com/amazon-listing-checker-results/"
 
 
 @background()
