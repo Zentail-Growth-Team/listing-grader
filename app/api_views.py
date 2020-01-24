@@ -26,13 +26,13 @@ def create_submission(request):
     if not seller_profile_url or not seller_email:
         return Response('Bad request. Missing parameters', status=status.HTTP_400_BAD_REQUEST)
     if 'amazon.com' not in seller_profile_url.lower() or 'seller' not in seller_profile_url.lower():
-        return Response('Invalid seller profile url', status=status.HTTP_400_BAD_REQUEST)
+        return Response('Invalid seller profile url', status=status.HTTP_424_FAILED_DEPENDENCY)
     if not validate_email(seller_email):
         return Response('Invalid email address', status=status.HTTP_400_BAD_REQUEST)
     parsed_url = urlparse(seller_profile_url)
     parsed_url_qs = parse_qs(parsed_url.query)
     if 'seller' not in parsed_url_qs:
-        return Response('Invalid seller profile url', status=status.HTTP_400_BAD_REQUEST)
+        return Response('Invalid seller profile url', status=status.HTTP_424_FAILED_DEPENDENCY)
     else:
         seller_id = parsed_url_qs['seller'][0]
 
@@ -48,7 +48,7 @@ def create_submission(request):
     if "zentail.com" not in seller_email:
         if ip_submissions.count() > settings.SUBMISSIONS_ALLOWED:
             return Response('It looks like you have already requested a listing analysis from Zentail',
-                            status=status.HTTP_200_OK)
+                            status=status.HTTP_409_CONFLICT)
 
     # Seller submission check
     try:
@@ -60,7 +60,7 @@ def create_submission(request):
         if "zentail.com" not in seller_email:
             if seller_submissions.count() > settings.SUBMISSIONS_ALLOWED:
                 return Response('It looks like you have already requested a listing analysis from Zentail',
-                                status=status.HTTP_200_OK)
+                                status=status.HTTP_409_CONFLICT)
     except Seller.DoesNotExist:
         seller = Seller.objects.create(email=seller_email, seller_id=seller_id)
 
