@@ -15,6 +15,8 @@ from .tasks import process_submission
 
 logger = logging.getLogger(__name__)
 
+IP_WHITELIST = ['71.127.147.142']
+
 
 @api_view(['POST'])
 def create_submission(request):
@@ -45,7 +47,7 @@ def create_submission(request):
     ip_submissions = Submission.objects.filter(ip_address=ip_address,
                                                timestamp__gte=(timezone.now() -
                                                                timedelta(days=settings.SUBMISSIONS_TIMEDELTA_DAYS)))
-    if "zentail.com" not in seller_email:
+    if "zentail.com" not in seller_email and ip_address not in IP_WHITELIST:
         if ip_submissions.count() > settings.SUBMISSIONS_ALLOWED:
             return Response('It looks like you have already requested a listing analysis from Zentail',
                             status=status.HTTP_409_CONFLICT)
@@ -57,7 +59,7 @@ def create_submission(request):
                                                        timestamp__gte=(timezone.now() -
                                                                        timedelta(
                                                                            days=settings.SUBMISSIONS_TIMEDELTA_DAYS)))
-        if "zentail.com" not in seller_email:
+        if "zentail.com" not in seller_email and ip_address not in IP_WHITELIST:
             if seller_submissions.count() > settings.SUBMISSIONS_ALLOWED:
                 return Response('It looks like you have already requested a listing analysis from Zentail',
                                 status=status.HTTP_409_CONFLICT)
