@@ -18,6 +18,9 @@ function expand_product(id) {
         expand_sign.removeAttribute('hidden');
     }
 }
+function numberWithCommas(x) {
+    return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+}
 json = json.replace(/\u00a0/g, ' ');
 json = json.replace(/&#39;/g,"'");
 json = json.replace(/&amp;/g,"&");
@@ -32,7 +35,7 @@ JSON.parse(json.replace(/&quot;/g,'"')).forEach(function(product) {
     let title = (pr.getElementsByClassName("second")[0]).getElementsByClassName("tittle-heading-4")[0];
     title.innerText = product.title.replace(/\[replace-quote\]/g, "\"").replace(/\[replace-single\]/g, "\'");
     let reviews = (pr.getElementsByClassName("fourth")[0]).getElementsByClassName("tittle-heading-4")[0];
-    reviews.innerText = product.num_reviews + " Customer Reviews";
+    reviews.innerText = numberWithCommas(product.num_reviews) + " Customer Reviews";
     let copy_score = Math.round((product.title_score*.425) + (product.description_score*.425) + (product.bullets_score));
     let total_score = Math.round((copy_score + product.media_score + product.ratings_reviews_score)/3);
     let score_block = pr.getElementsByClassName("score-block")[0];
@@ -274,7 +277,7 @@ JSON.parse(json.replace(/&quot;/g,'"')).forEach(function(product) {
     fill_ins[3].innerText = "Your image count is " + product.media_num_images;
     fill_ins[4].innerText = "Your video count is " + product.media_num_videos;
     fill_ins[5].innerText = "The average rating is " + product.rating + " stars";
-    fill_ins[6].innerText = "Your product has " + product.num_reviews + " review(s)";
+    fill_ins[6].innerText = "Your product has " + numberWithCommas(product.num_reviews) + " review(s)";
     if(num_of_products !== 1){
         product_table.appendChild(pr);
         product_table.appendChild(pr_ex);
