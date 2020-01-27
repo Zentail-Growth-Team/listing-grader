@@ -127,7 +127,12 @@ def analyze_products(products_list):
                 print("Analyze media")
                 media_results = analyze_media(images, videos)
                 print("Analyze extra content")
-                extra_content_results = 100 if 'aplus_html' in product_data and product_data['aplus_html'] is not None else 0
+                if 'aplus_html' in product_data and product_data['aplus_html'] is not None:
+                    extra_content_results = 100
+                elif 'ebc_html' in product_data and product_data['ebc_html'] is not None:
+                    extra_content_results = 100
+                else:
+                    extra_content_results = 0
                 results.append({
                     "product_id": product_id,
                     "title": title_results,
