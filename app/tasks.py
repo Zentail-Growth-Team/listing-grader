@@ -19,6 +19,8 @@ def process_submission(submission_id):
     with transaction.atomic():
         try:
             submission = Submission.objects.get(id=submission_id)
+            submission.status = submission.PROCESSING
+            submission.save()
             seller_page = requests.get(f"https://www.amazon.com/sp?seller={submission.seller.seller_id}")
             bs = BeautifulSoup(seller_page.text)
             seller_name = bs.find(id='sellerName').text if bs.find(id='sellerName') else ''
@@ -127,6 +129,8 @@ def process_submission(submission_id):
             )
             new_seller_analysis.save()
             logger.info('Saved')
+            submission.status = submission.SUCCESS
+            submission.save()
             send_to_webflow(submission_id)
             send_to_zapier(submission.seller.email,
                            submission.seller.seller_id,
@@ -139,6 +143,8 @@ def process_submission(submission_id):
         except Exception as e:
             logger.error(f"{submission_id} could not be processed properly. Exception: {e}")
             try:
+                submission.status = submission.FAILURE
+                submission.save()
                 send_to_zapier(submission.seller.email,
                                submission.seller.seller_id,
                                "",

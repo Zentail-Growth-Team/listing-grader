@@ -14,7 +14,7 @@ class SellerAdmin(admin.ModelAdmin):
 
 @admin.register(Submission)
 class Submission(admin.ModelAdmin):
-    list_display = ('seller', 'timestamp', 'ip_address')
+    list_display = ('seller', 'timestamp', 'status', 'ip_address')
 
 
 @admin.register(AnalysisResult)

@@ -15,10 +15,21 @@ class Seller(models.Model):
 
 
 class Submission(models.Model):
+    SUBMITTED = 'submitted'
+    PROCESSING = 'processing'
+    SUCCESS = 'success'
+    FAILURE = 'failure'
+    STATUS_CHOICES = [
+        (SUBMITTED, 'Submitted'),
+        (PROCESSING, 'Processing'),
+        (SUCCESS, 'Success'),
+        (FAILURE, 'Failure')
+    ]
     timestamp = models.DateTimeField(auto_now_add=True)
     seller = models.ForeignKey(Seller, on_delete=models.CASCADE)
     ip_address = models.GenericIPAddressField()
     limit_results = models.IntegerField(default=20, help_text="Use '0' for no limit")
+    status = models.CharField(choices=STATUS_CHOICES, max_length=10, default=SUBMITTED)
 
     def __str__(self):
         eastern = timezone('US/Eastern')
