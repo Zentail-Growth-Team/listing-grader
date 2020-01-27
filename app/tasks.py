@@ -32,7 +32,7 @@ def process_submission(submission_id):
             pagination = True
             page = 1
             while pagination:
-                zinc_api_url = f"{settings.ZINC_SELLER_API_URL}?seller_id={submission.seller.seller_id}&retailer=amazon&page={page}"
+                zinc_api_url = f"{settings.ZINC_SELLER_API_URL}?seller_id={submission.seller.seller_id}&retailer=amazon&page={page}&max_age=300"
                 response = requests.get(url=zinc_api_url, auth=(settings.ZINC_API_TOKEN, ""))
                 logger.info(f"Request num:{page}")
                 if response.status_code == 200:

@@ -70,33 +70,40 @@ JSON.parse(json.replace(/&quot;/g,'"')).forEach(function(product) {
         si[3].classList.add("gray");
         si[4].classList.add("gray");
     }
-    else if (product.rating < 2){
+    else if (product.rating < 1.5){
         si[0].classList.remove("gray");
         si[1].classList.add("gray");
         si[2].classList.add("gray");
         si[3].classList.add("gray");
         si[4].classList.add("gray");
     }
-    else if (product.rating < 3){
+    else if (product.rating < 2.5){
         si[0].classList.remove("gray");
         si[1].classList.remove("gray");
         si[2].classList.add("gray");
         si[3].classList.add("gray");
         si[4].classList.add("gray");
     }
-    else if (product.rating < 4){
+    else if (product.rating < 3.5){
         si[0].classList.remove("gray");
         si[1].classList.remove("gray");
         si[2].classList.remove("gray");
         si[3].classList.add("gray");
         si[4].classList.add("gray");
     }
-    else if (product.rating < 5){
+    else if (product.rating < 4.5){
         si[0].classList.remove("gray");
         si[1].classList.remove("gray");
         si[2].classList.remove("gray");
         si[3].classList.remove("gray");
         si[4].classList.add("gray");
+    }
+    else {
+        si[0].classList.remove("gray");
+        si[1].classList.remove("gray");
+        si[2].classList.remove("gray");
+        si[3].classList.remove("gray");
+        si[4].classList.remove("gray");
     }
 
     let scores = pr_ex.getElementsByTagName("span");
