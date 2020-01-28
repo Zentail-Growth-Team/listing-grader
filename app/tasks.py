@@ -46,8 +46,13 @@ def process_submission(submission_id):
                         if submission.limit_results != 0 and len(full_product_list) >= submission.limit_results:
                             pagination = False
                         page += 1
-                    except KeyError:
-                        logger.info('key error')
+                    except Exception as e:
+                        logger.error(f'{e}')
+                        send_to_zapier(submission.seller.email,
+                                       submission.seller.seller_id,
+                                       "",
+                                       submission.seller.seller_name,
+                                       "fail")
                 else:
                     logger.error(response.content)
             results = analyze_products(full_product_list)
