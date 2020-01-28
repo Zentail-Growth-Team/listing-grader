@@ -27,13 +27,13 @@ def create_submission(request):
     # Parameter validation
     if not seller_profile_url or not seller_email:
         return Response('Bad request. Missing parameters', status=status.HTTP_400_BAD_REQUEST)
-    if 'amazon.com' not in seller_profile_url.lower() or 'seller' not in seller_profile_url.lower():
-        return Response('Invalid seller profile url', status=status.HTTP_424_FAILED_DEPENDENCY)
     if not validate_email(seller_email):
         return Response('Invalid email address', status=status.HTTP_400_BAD_REQUEST)
     if len(seller_profile_url) == 14:
         seller_id = seller_profile_url
     else:
+        if 'amazon.com' not in seller_profile_url.lower() or 'seller' not in seller_profile_url.lower():
+            return Response('Invalid seller profile url', status=status.HTTP_424_FAILED_DEPENDENCY)
         parsed_url = urlparse(seller_profile_url)
         parsed_url_qs = parse_qs(parsed_url.query)
         if 'seller' not in parsed_url_qs:
