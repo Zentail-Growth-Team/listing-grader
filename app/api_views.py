@@ -31,12 +31,15 @@ def create_submission(request):
         return Response('Invalid seller profile url', status=status.HTTP_424_FAILED_DEPENDENCY)
     if not validate_email(seller_email):
         return Response('Invalid email address', status=status.HTTP_400_BAD_REQUEST)
-    parsed_url = urlparse(seller_profile_url)
-    parsed_url_qs = parse_qs(parsed_url.query)
-    if 'seller' not in parsed_url_qs:
-        return Response('Invalid seller profile url', status=status.HTTP_424_FAILED_DEPENDENCY)
+    if len(seller_profile_url) == 14:
+        seller_id = seller_profile_url
     else:
-        seller_id = parsed_url_qs['seller'][0]
+        parsed_url = urlparse(seller_profile_url)
+        parsed_url_qs = parse_qs(parsed_url.query)
+        if 'seller' not in parsed_url_qs:
+            return Response('Invalid seller profile url', status=status.HTTP_424_FAILED_DEPENDENCY)
+        else:
+            seller_id = parsed_url_qs['seller'][0]
 
     # IP address submission check
     x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
