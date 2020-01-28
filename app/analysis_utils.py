@@ -241,7 +241,7 @@ def analyze_title(title):
 
 def analyze_description(description):
     # Checking for quotes
-    if "\"" in description:
+    if re.findall(r'\D\\[\"\']', description):
         contains_quotes = True
     else:
         contains_quotes = False
