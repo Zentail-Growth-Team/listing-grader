@@ -183,6 +183,7 @@ SUBMISSIONS_ALLOWED = 2
 
 ZINC_SELLER_API_URL = 'https://api.zinc.io/v1/search'
 ZINC_PRODUCT_API_URL = 'https://api.zinc.io/v1/products/'
+ZINC_SELLER_NAME_API = 'https://ziggurat.zinc.io/v1/zigg/amazon_seller/us;'
 ZINC_API_TOKEN = 'EE4CB9F7EC5F0B8CCECD89B8'
 
 WEBFLOW_TOKEN = '7626821a1e1e278cd5ae07a1c15f057dd4d25ef68d2cf34ece7863c0db59572d'

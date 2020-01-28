@@ -21,9 +21,16 @@ def process_submission(submission_id):
             submission = Submission.objects.get(id=submission_id)
             submission.status = submission.PROCESSING
             submission.save()
-            seller_page = requests.get(f"https://www.amazon.com/sp?seller={submission.seller.seller_id}")
-            bs = BeautifulSoup(seller_page.text)
-            seller_name = bs.find(id='sellerName').text if bs.find(id='sellerName') else ''
+            zinc_seller_name_url = f"{settings.ZINC_SELLER_NAME_API}{submission.seller.seller_id}?max_age=90&timeout=90"
+            response = requests.get(url=zinc_seller_name_url, auth=(settings.ZINC_API_TOKEN, ""))
+            if response.status_code == 200:
+                try:
+                    seller_name = response.json()['value']['results']['seller_name']
+                except Exception as e:
+                    logger.error("Problem getting seller name")
+                    seller_name = ""
+            else:
+                seller_name = ""
             seller = submission.seller
             seller.seller_name = seller_name
             seller.save()
