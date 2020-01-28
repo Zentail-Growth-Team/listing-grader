@@ -88,8 +88,8 @@ def send_to_webflow(submission_id):
     }
 
     # Check for existing analysis
-    if AnalysisResult.objects.filter(seller=submission.seller).count() > 1:
-        prev_results = AnalysisResult.objects.filter(seller=submission.seller).order_by('-submission__timestamp')
+    if AnalysisResult.objects.filter(seller__seller_id=submission.seller.seller_id).count() > 1:
+        prev_results = AnalysisResult.objects.filter(seller__seller_id=submission.seller.seller_id).order_by('-submission__timestamp')
         for result in prev_results:
             if result.webflow_cms_id:
                 print('FIRST PUT')
