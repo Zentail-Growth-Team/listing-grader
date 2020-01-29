@@ -107,7 +107,7 @@ def analyze_products(products_list):
         except KeyError:
             continue
         print("Getting product data")
-        response = requests.get(url=f"{settings.ZINC_PRODUCT_API_URL}{product_id}?retailer=amazon",
+        response = requests.get(url=f"{settings.ZINC_PRODUCT_API_URL}{product_id}?retailer=amazon&max_age=300",
                                 auth=(settings.ZINC_API_TOKEN, ""))
         if response.status_code == 200:
             product_data = response.json()
