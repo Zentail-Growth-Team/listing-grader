@@ -54,6 +54,8 @@ def process_submission(submission_id):
                             if submission.limit_results != 0 and len(full_product_list) >= submission.limit_results:
                                 pagination = False
                             page += 1
+                        else:
+                            pagination = False
                     except Exception as e:
                         pagination = False
                         logger.error(f'{e}')
