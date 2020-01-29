@@ -15,7 +15,7 @@ from .tasks import process_submission
 
 logger = logging.getLogger(__name__)
 
-IP_WHITELIST = ['71.127.147.142']
+IP_WHITELIST = ['71.127.147.142', '96.234.206.182']
 
 
 @api_view(['POST'])
