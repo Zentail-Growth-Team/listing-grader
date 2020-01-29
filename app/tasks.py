@@ -160,7 +160,14 @@ def process_submission(submission_id):
                                f"{RESULTS_BASE_URL}{submission.seller.seller_id}",
                                submission.seller.seller_name,
                                "success")
-
+            else:
+                submission.status = submission.FAILURE
+                submission.save()
+                send_to_zapier(submission.seller.email,
+                               submission.seller.seller_id,
+                               "",
+                               submission.seller.seller_name,
+                               "fail")
         except Submission.DoesNotExist:
             logger.error(f"{submission_id} does not exist")
         except Exception as e:
