@@ -182,8 +182,8 @@ def analyze_title(title):
         contains_ascii = False
 
     # Checking for SEO-adverse characters
-    bad_chars = ['~', '!', '*', '$', '?', '_', '~', '{', '}', '[', ']', '#', '&lt;', '>', '|', '*', ';', '/', '^',
-                 '¬', '¦', '&']
+    bad_chars = ['~', '!', '*', '$', '?', '_', '~', '{', '}', '#', '&lt;', '>', '|', '*', ';', '^',
+                 '¬', '¦']
     if any(char in title for char in bad_chars):
         contains_seo_adverse_chars = True
     else:
@@ -192,20 +192,37 @@ def analyze_title(title):
     # Checking for word-by-word violations
     title_keywords = []
     ignore = ['with', 'of', 'and', 'or', 'to', 'the', 'a', 'an', 'at', 'for', 'in', 'over', 'on', 'iPhone',
-              'iPad', 'by']
+              'iPad', 'by', 'off', 'onto', 'into', 'from', 'but', 'per', 'if', 'yet', 'without', 'via', 'w']
     num_lower_case = 0
     num_all_caps = 0
     num_incorrect_caps = 0
     contains_dollar_sign = False
     for word in title.split():
-        word = re.sub('[^a-zA-Z0-9 \n.]', '', word)
+        word = re.sub('[^a-zA-Z0-9 \-\n.]', '', word)
         if word.lower() not in (item.lower() for item in ignore):
             title_keywords.append(word)
 
         # Checking for words not starting with upper case
         try:
-            if word[0].islower() and word.lower() not in (word.lower() for word in ignore):
-                num_lower_case += 1
+            if '-' in word:
+                print(word)
+                split_words = word.split('-')
+                if len(split_words) == 3:
+                    if split_words[0][0].islower() or split_words[2][0].islower():
+                        num_lower_case += 1
+                    else:
+                        if split_words[1][0].isupper() and split_words[1].lower() in ignore:
+                            num_incorrect_caps += 1
+                        if split_words[1][0].islower() and split_words[1] not in ignore:
+                            num_lower_case += 1
+                else:
+                    for sw in split_words:
+                        if sw.islower():
+                            num_lower_case += 1
+                            break
+            else:
+                if word[0].islower() and word not in ignore:
+                    num_lower_case += 1
         except IndexError:
             pass
 
