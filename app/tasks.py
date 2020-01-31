@@ -158,6 +158,7 @@ def process_submission(submission_id):
                     feedback_score=seller_reviews_score_total/len(results),
                     extra_content_score=seller_extra_score_total/len(results),
                     seller_image_url=seller_image_url,
+                    results_url=f"{RESULTS_BASE_URL}{submission.seller.seller_id}",
                 )
                 new_seller_analysis.save()
                 logger.info('Saved')
