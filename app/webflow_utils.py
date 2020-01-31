@@ -3,6 +3,7 @@ import json
 import requests
 from django.conf import settings
 from django.forms.models import model_to_dict
+from django.utils import timezone
 from .models import Submission, AnalysisResult, ProductAnalysisResult
 
 logger = logging.getLogger(__name__)
@@ -101,6 +102,8 @@ def send_to_webflow(submission_id):
                 print(item_json)
                 if 'problems' in item_json:
                     logger.error(f"Problem uploading: {item_json}")
+                    submission.notes += f"{timezone.now().strftime('%b %d, %Y,  %I:%M %p')} - Problem uploading to webflow\n"
+                    submission.save()
                 else:
                     analysis.webflow_cms_id = item_json['_id']
                     analysis.save()
@@ -122,6 +125,8 @@ def send_to_webflow(submission_id):
                 print(response.json())
                 if 'problems' in item_json:
                     logger.error(f"Problem uploading: {item_json}")
+                    submission.notes += f"{timezone.now().strftime('%b %d, %Y,  %I:%M %p')} - Problem uploading to webflow\n"
+                    submission.save()
                 else:
                     logger.info(item_json)
                 break
@@ -151,6 +156,8 @@ def send_to_webflow(submission_id):
         print(response.json())
         if 'problems' in item_json:
             logger.error(f"Problem uploading: {item_json}")
+            submission.notes += f"{timezone.now().strftime('%b %d, %Y,  %I:%M %p')} - Problem uploading to webflow\n"
+            submission.save()
         else:
             analysis.webflow_cms_id = item_json['_id']
             analysis.save()

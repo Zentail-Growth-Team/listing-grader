@@ -4,6 +4,7 @@ from background_task import background
 from bs4 import BeautifulSoup
 from django.conf import settings
 from django.db import transaction
+from django.utils import timezone
 from .analysis_utils import analyze_products, calculate_product_scores
 from .models import Submission, ProductAnalysisResult, AnalysisResult
 from .webflow_utils import send_to_webflow
@@ -28,8 +29,12 @@ def process_submission(submission_id):
                     seller_name = response.json()['value']['results']['seller_name']
                 except Exception as e:
                     logger.error("Problem getting seller name")
+                    submission.notes += f"{timezone.now().strftime('%b %d, %Y,  %I:%M %p')} - Invalid name data from Zinc\n"
+                    submission.save()
                     seller_name = ""
             else:
+                submission.notes += f"{timezone.now().strftime('%b %d, %Y,  %I:%M %p')} - Zinc seller name call failure\n"
+                submission.save()
                 seller_name = ""
             seller = submission.seller
             seller.seller_name = seller_name
@@ -59,17 +64,21 @@ def process_submission(submission_id):
                     except Exception as e:
                         pagination = False
                         logger.error(f'{e}')
+                        submission.notes += f"{timezone.now().strftime('%b %d, %Y,  %I:%M %p')} - Invalid seller data from Zinc\n"
+                        submission.save()
                         send_to_zapier(submission.seller.email,
                                        submission.seller.seller_id,
-                                       "",
+                                       "fail",
                                        submission.seller.seller_name,
                                        "fail")
                 else:
                     pagination = False
                     logger.error(response.content)
+                    submission.notes += f"{timezone.now().strftime('%b %d, %Y,  %I:%M %p')} - Zinc seller data call failure\n"
+                    submission.save()
                     send_to_zapier(submission.seller.email,
                                    submission.seller.seller_id,
-                                   "",
+                                   "fail",
                                    submission.seller.seller_name,
                                    "fail")
             if full_product_list:
@@ -162,10 +171,11 @@ def process_submission(submission_id):
                                "success")
             else:
                 submission.status = submission.FAILURE
+                submission.notes += f"{timezone.now().strftime('%b %d, %Y,  %I:%M %p')} - Empty product list\n"
                 submission.save()
                 send_to_zapier(submission.seller.email,
                                submission.seller.seller_id,
-                               "",
+                               "fail",
                                submission.seller.seller_name,
                                "fail")
         except Submission.DoesNotExist:
@@ -174,10 +184,11 @@ def process_submission(submission_id):
             logger.error(f"{submission_id} could not be processed properly. Exception: {e}")
             try:
                 submission.status = submission.FAILURE
+                submission.notes += f"{timezone.now().strftime('%b %d, %Y,  %I:%M %p')} - Exception (check log)\n"
                 submission.save()
                 send_to_zapier(submission.seller.email,
                                submission.seller.seller_id,
-                               "",
+                               "fail",
                                submission.seller.seller_name,
                                "fail")
             except Exception as e:
