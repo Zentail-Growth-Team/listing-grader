@@ -89,7 +89,8 @@ def send_to_webflow(submission_id):
     }
 
     # Check for existing analysis
-    if AnalysisResult.objects.filter(seller__seller_id=submission.seller.seller_id).count() > 1:
+    existing_analysis = False
+    if AnalysisResult.objects.filter(seller__seller_id=submission.seller.seller_id, submission__status='success').count() > 1:
         prev_results = AnalysisResult.objects.filter(seller__seller_id=submission.seller.seller_id).order_by('-submission__timestamp')
         for result in prev_results:
             if result.webflow_cms_id:
@@ -129,8 +130,10 @@ def send_to_webflow(submission_id):
                     submission.save()
                 else:
                     logger.info(item_json)
+                existing_analysis = True
                 break
-
+        if not existing_analysis:
+            logger.error('Existing analysises with no CMS id on Webflow')
     else:
         print('FIRST POST')
         item = requests.post(url=f"{settings.WEBFLOW_DEFAULT_ENDPOINT}/collections/{settings.WEBFLOW_COLLECTION}/items?live=true", data=json_data,
