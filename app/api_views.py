@@ -1,6 +1,8 @@
 import logging
 from datetime import timedelta
+from django.http.response import HttpResponseRedirect
 from django.utils import timezone
+from django.urls import reverse
 from django.conf import settings
 from rest_framework import status
 from rest_framework.decorators import api_view
@@ -77,3 +79,14 @@ def create_submission(request):
     process_submission(submission.id)
     return Response('Thank you for your submission. We\'ll email your results within 1 business day',
                     status=status.HTTP_201_CREATED)
+
+
+@api_view(['GET'])
+def resubmit(request, submission_pk):
+    try:
+        submisson = Submission.objects.get(id=submission_pk)
+        new_submission = Submission.objects.create(seller=submisson.seller, ip_address=submisson.ip_address)
+        process_submission(new_submission.id)
+    except Submission.DoesNotExist:
+        return Response('Bad request.', status=status.HTTP_400_BAD_REQUEST)
+    return HttpResponseRedirect(reverse('admin:app_submission_changelist'))
