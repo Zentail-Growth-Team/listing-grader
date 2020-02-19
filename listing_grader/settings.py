@@ -23,7 +23,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = '-g+ln+)t==jgw!tne^3^u4-09q_d_!$pw6o(7m3-agj(k+z^-c'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = ['45.55.104.61', '127.0.0.1', 'insights.zentail.com', 'localhost']
 
@@ -93,9 +93,17 @@ CSRF_TRUSTED_ORIGINS = [
 # https://docs.djangoproject.com/en/2.2/ref/settings/#databases
 
 DATABASES = {
-    'default': {
+    'replica': {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+    },
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'listinggrader',
+        'USER': 'zentail',
+        'PASSWORD': 'Zent@ilRox',
+        'HOST': 'localhost',
+        'PORT': '5432'
     }
 }
 
