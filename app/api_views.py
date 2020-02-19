@@ -1,3 +1,4 @@
+import csv
 import logging
 from datetime import timedelta
 from django.http.response import HttpResponseRedirect
@@ -12,6 +13,8 @@ from validate_email import validate_email
 from .models import (
     Seller,
     Submission,
+    AnalysisResult,
+    ProductAnalysisResult
 )
 from .tasks import process_submission
 
@@ -83,10 +86,12 @@ def create_submission(request):
 
 @api_view(['GET'])
 def resubmit(request, submission_pk):
-    try:
-        submisson = Submission.objects.get(id=submission_pk)
-        new_submission = Submission.objects.create(seller=submisson.seller, ip_address=submisson.ip_address)
-        process_submission(new_submission.id)
-    except Submission.DoesNotExist:
-        return Response('Bad request.', status=status.HTTP_400_BAD_REQUEST)
-    return HttpResponseRedirect(reverse('admin:app_submission_changelist'))
+    if request.user.is_staff:
+        try:
+            submisson = Submission.objects.get(id=submission_pk)
+            new_submission = Submission.objects.create(seller=submisson.seller, ip_address=submisson.ip_address)
+            process_submission(new_submission.id)
+        except Submission.DoesNotExist:
+            return Response('Bad request.', status=status.HTTP_400_BAD_REQUEST)
+        return HttpResponseRedirect(reverse('admin:app_submission_changelist'))
+    return Response('Unauthorized', status=status.HTTP_401_UNAUTHORIZED)
