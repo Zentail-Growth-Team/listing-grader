@@ -30,7 +30,7 @@ class Submission(models.Model):
     ip_address = models.GenericIPAddressField()
     limit_results = models.IntegerField(default=20, help_text="Use '0' for no limit")
     status = models.CharField(choices=STATUS_CHOICES, max_length=10, default=SUBMITTED)
-    notes = models.TextField(blank=True, null=True)
+    notes = models.TextField(blank=True)
 
     def __str__(self):
         eastern = timezone('US/Eastern')
