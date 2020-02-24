@@ -197,4 +197,4 @@ WEBFLOW_VERSION = '1.0.0'
 
 ZAPIER_WEBHOOK = 'https://hooks.zapier.com/hooks/catch/92396/otksap7/'
 
-MAX_ATTEMPTS = 2
+MAX_ATTEMPTS = 4

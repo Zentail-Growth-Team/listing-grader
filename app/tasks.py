@@ -1,11 +1,11 @@
 import logging
 import requests
 from background_task import background
-from bs4 import BeautifulSoup
 from django.conf import settings
 from django.db import transaction
 from django.utils import timezone
 from .analysis_utils import analyze_products, calculate_product_scores
+from .exceptions import ProcessingException
 from .models import Submission, ProductAnalysisResult, AnalysisResult
 from .webflow_utils import send_to_webflow
 from .zapier_utils import send_to_zapier
@@ -71,6 +71,7 @@ def process_submission(submission_id):
                                        "fail",
                                        submission.seller.seller_name,
                                        "fail")
+                        raise ProcessingException
                 else:
                     pagination = False
                     logger.error(response.content)
@@ -81,6 +82,7 @@ def process_submission(submission_id):
                                    "fail",
                                    submission.seller.seller_name,
                                    "fail")
+                    raise ProcessingException
             if full_product_list:
                 results = analyze_products(full_product_list)
                 logger.info('********Finished analyzing all products')
@@ -179,8 +181,10 @@ def process_submission(submission_id):
                                "fail",
                                submission.seller.seller_name,
                                "fail")
+                raise ProcessingException
         except Submission.DoesNotExist:
             logger.error(f"{submission_id} does not exist")
+            raise ProcessingException
         except Exception as e:
             logger.error(f"{submission_id} could not be processed properly. Exception: {e}")
             try:
@@ -192,6 +196,7 @@ def process_submission(submission_id):
                                "fail",
                                submission.seller.seller_name,
                                "fail")
+                raise ProcessingException
             except Exception as e:
                 logger.error(f"Couldn't send to Zapier: {e}")
 

@@ -5,6 +5,7 @@ from django.conf import settings
 from django.forms.models import model_to_dict
 from django.utils import timezone
 from .models import Submission, AnalysisResult, ProductAnalysisResult
+from .exceptions import ProcessingException
 
 logger = logging.getLogger(__name__)
 
@@ -105,6 +106,7 @@ def send_to_webflow(submission_id):
                     logger.error(f"Problem uploading: {item_json}")
                     submission.notes += f"{timezone.now().strftime('%b %d, %Y,  %I:%M %p')} - Problem uploading to webflow\n"
                     submission.save()
+                    raise ProcessingException
                 else:
                     analysis.webflow_cms_id = item_json['_id']
                     analysis.save()
@@ -128,6 +130,7 @@ def send_to_webflow(submission_id):
                     logger.error(f"Problem uploading: {item_json}")
                     submission.notes += f"{timezone.now().strftime('%b %d, %Y,  %I:%M %p')} - Problem uploading to webflow\n"
                     submission.save()
+                    raise ProcessingException
                 else:
                     logger.info(item_json)
                 existing_analysis = True
@@ -161,6 +164,7 @@ def send_to_webflow(submission_id):
             logger.error(f"Problem uploading: {item_json}")
             submission.notes += f"{timezone.now().strftime('%b %d, %Y,  %I:%M %p')} - Problem uploading to webflow\n"
             submission.save()
+            raise ProcessingException
         else:
             analysis.webflow_cms_id = item_json['_id']
             analysis.save()
