@@ -25,12 +25,21 @@ class Submission(models.Model):
         (SUCCESS, 'Success'),
         (FAILURE, 'Failure')
     ]
+    ADMIN = 'admin'
+    WEBSITE = 'website'
+    RESUBMISSION = 'resubmission'
+    SOURCE_CHOICES = [
+        (ADMIN, 'Admin'),
+        (WEBSITE, 'Website'),
+        (RESUBMISSION, 'Resubmission')
+    ]
     timestamp = models.DateTimeField(auto_now_add=True)
     seller = models.ForeignKey(Seller, on_delete=models.CASCADE)
     ip_address = models.GenericIPAddressField()
     limit_results = models.IntegerField(default=20, help_text="Use '0' for no limit")
     status = models.CharField(choices=STATUS_CHOICES, max_length=10, default=SUBMITTED)
     notes = models.TextField(blank=True)
+    source = models.CharField(choices=SOURCE_CHOICES, max_length=12, blank=True)
 
     def __str__(self):
         eastern = timezone('US/Eastern')
