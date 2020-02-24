@@ -76,9 +76,11 @@ def create_submission(request):
 
     # Create submission
     if limit_results and limit_results >= 0:
-        submission = Submission.objects.create(seller=seller, ip_address=ip_address, limit_results=limit_results)
+        submission = Submission.objects.create(seller=seller, ip_address=ip_address,
+                                               source=Submission.WEBSITE, limit_results=limit_results)
     else:
-        submission = Submission.objects.create(seller=seller, ip_address=ip_address)
+        submission = Submission.objects.create(seller=seller, ip_address=ip_address,
+                                               source=Submission.WEBSITE)
     process_submission(submission.id)
     return Response('Thank you for your submission. We\'ll email your results within 1 business day',
                     status=status.HTTP_201_CREATED)
@@ -89,7 +91,9 @@ def resubmit(request, submission_pk):
     if request.user.is_staff:
         try:
             submisson = Submission.objects.get(id=submission_pk)
-            new_submission = Submission.objects.create(seller=submisson.seller, ip_address=submisson.ip_address)
+            new_submission = Submission.objects.create(seller=submisson.seller,
+                                                       ip_address=submisson.ip_address,
+                                                       source=Submission.RESUBMISSION)
             process_submission(new_submission.id)
         except Submission.DoesNotExist:
             return Response('Bad request.', status=status.HTTP_400_BAD_REQUEST)
