@@ -34,7 +34,8 @@ def create_submission(request):
         return Response('Bad request. Missing parameters', status=status.HTTP_400_BAD_REQUEST)
     if not validate_email(seller_email):
         return Response('Invalid email address', status=status.HTTP_400_BAD_REQUEST)
-    if len(seller_profile_url) == 14:
+    seller_profile_url = seller_profile_url.strip()
+    if len(seller_profile_url) == 14 or len(seller_profile_url) == 13:
         seller_id = seller_profile_url
     else:
         if 'amazon.com' not in seller_profile_url.lower() or 'seller' not in seller_profile_url.lower():
